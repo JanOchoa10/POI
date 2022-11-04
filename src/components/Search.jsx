@@ -59,13 +59,13 @@ const Search = () => {
 
                 console.log(user.displayName)
                 console.log(myChats)
-                
-                
+
+
 
                 // console.log("Cantidad de chats: " + cantidadDeChats);
                 console.log("Cantidad de usuarios coincidentes: " + inicio);
 
-                
+
 
 
                 if (inicio == 0) {
@@ -101,13 +101,18 @@ const Search = () => {
 
     const handleSelect = async (u) => {
         //verificar el gtupo (chats in firestore) existe o no, si existe no crear
-        
-        
-        
+
+
+
         const combineId =
-            currentUser.uid > user.uid
-                ? currentUser.uid + user.uid
-                : user.uid + currentUser.uid;
+            currentUser.uid > u.uid
+                ? currentUser.uid + u.uid
+                : u.uid + currentUser.uid;
+
+
+
+                
+        console.log(combineId)
         try {
             const res = await getDoc(doc(db, "chats", combineId));
 
@@ -129,14 +134,14 @@ const Search = () => {
                 }*/
                 await updateDoc(doc(db, "userChats", currentUser.uid), {
                     [combineId + ".userInfo"]: {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
+                        uid: u.uid,
+                        displayName: u.displayName,
+                        photoURL: u.photoURL,
                     },
                     [combineId + ".date"]: serverTimestamp()
                 });
 
-                await updateDoc(doc(db, "userChats", user.uid), {
+                await updateDoc(doc(db, "userChats", u.uid), {
                     [combineId + ".userInfo"]: {
                         uid: currentUser.uid,
                         displayName: currentUser.displayName,

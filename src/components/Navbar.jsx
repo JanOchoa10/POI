@@ -9,9 +9,10 @@ import { AuthContext } from "../context/AuthContext";
 import Swal from 'sweetalert2'
 import Group from "../img/NewMessageIcon.png";
 import Chats, { handleSelect } from './Chats.jsx';
-import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp, Firestore } from "firebase/firestore";
+import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp, Firestore, limitToLast } from "firebase/firestore";
 import { db } from "../firebase";
 import { ChatContext } from "../context/ChatContext";
+import { list } from "firebase/storage";
 
 const Navbar = () => {
     const { dispatch } = useContext(ChatContext);
@@ -137,7 +138,7 @@ const Navbar = () => {
         e.preventDefault();
 
         e.target.reset();
-        crearGrupo();
+        
     }
 
     const handleSelect = async (u) => {
@@ -280,23 +281,44 @@ const Navbar = () => {
                         }
                     }
                 }*/
-                await updateDoc(doc(db, "userChats", currentUser.uid), {
-                    [combineId + ".userInfo"]: {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
-                    },
-                    [combineId + ".date"]: serverTimestamp()
-                });
+                for (let i = 0; i < listaDeInte.length; i++) {
+                    await updateDoc(doc(db, "userChats", currentUser.uid), {
+                        [combineId + ".userInfo"]: {
+                            uid: listaDeInte[i].uid,
+                            displayName: listaDeInte[i].displayName,
+                            photoURL: listaDeInte[i].photoURL,
+                        },
+                        [combineId + ".date"]: serverTimestamp()
+                    });
+                }
 
-                await updateDoc(doc(db, "userChats", user.uid), {
-                    [combineId + ".userInfo"]: {
-                        uid: currentUser.uid,
-                        displayName: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
-                    },
-                    [combineId + ".date"]: serverTimestamp()
-                });
+
+                for (let i = 0; i < listaDeInte.length; i++) {
+                    for (let j = 0; j < listaDeInte.length; j++) {
+                        if (listaDeInte[j] == listaDeInte[i]) {
+
+                        } else {
+                            await updateDoc(doc(db, "userChats", listaDeInte[i].uid), {
+                                [combineId + ".userInfo"]: {
+                                    uid: listaDeInte[j].uid,
+                                    displayName: listaDeInte[j].displayName,
+                                    photoURL: listaDeInte[j].photoURL,
+                                },
+                                [combineId + ".date"]: serverTimestamp()
+                            });
+                        }
+                    }
+                    await updateDoc(doc(db, "userChats", listaDeInte[i].uid), {
+                        [combineId + ".userInfo"]: {
+                            uid: currentUser.uid,
+                            displayName: currentUser.displayName,
+                            photoURL: currentUser.photoURL,
+                        },
+                        [combineId + ".date"]: serverTimestamp()
+                    });
+                }
+
+
 
             } else {
 
@@ -352,7 +374,7 @@ const Navbar = () => {
                                     onBlur={focusOut} />
 
                                 <input type="button" className="myBtn" value="Crear grupo"
-                                />
+                                   onClick={crearGrupo} />
                             </form>
 
                         </div>
