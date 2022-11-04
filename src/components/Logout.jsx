@@ -7,18 +7,13 @@ import { v4 as uuid } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Img from "../img/img_robbin.png";
 import Attach from "../img/attach_robbin.png";
-import Plus from "../img/addIcon2.png";
-import Loca from "../img/Location.png";
-import emoji from 'emoji-library';
-import { EmojiService, emoji_list } from "emoji-library";
-import "emoji-selector";
+import add3 from "../img/logo_robbin.png";
+import add2 from "../img/out_2.png";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
+const Logout = () => {
 
-const Input = () => {
-    //const { EmojiService } = require("emoji-library"); 
-    //const emojiService = new EmojiService(); 
-    //const emojiList = emojiService.getEmojiList();
-    //console.log('emojiList', emojiList[0]);
 
     const [text, setText] = useState("");
     const [senderId, setSender] = useState("");
@@ -92,68 +87,27 @@ const Input = () => {
         e.code === "Enter" && handleSend();
     };
 
-    // //const [inputStr, setInputStr] = useState('');
-    // const [showPicker, setShowPicker] = useState(false);
-
-    // const onEmojiClick = (event, emojiObject) => {
-    //     setText(prevInput => prevInput + emojiObject.emoji);
-    //     setShowPicker(false);
-    // }
 
     function InsertarIconos(data) {
 
         if (data.user?.displayName !== undefined) {
             return (
                 <div className="input">
-                    {/* <img src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg" alt="" />
-                    {showPicker && <emoji pickerStyle={{widht: '100%'}}
-                    onEmojiClick={onEmojiClick}/>} */}
 
-                    {/* <img src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg" alt="" />
-                    {showPicker && <emoji pickerStyle={{ widht: '100%' }}
-                        onEmojiClick={onEmojiClick} />} */}
-
-                    <input type="text" placeholder="Mensaje" onKeyDown={handleKey} onChange={e => setText(e.target.value)} value={text} title="Escribe tu mensaje" />
-
-
-
+                    <input type="text" placeholder="Mensaje" onKeyDown={handleKey} onChange={e => setText(e.target.value)} value={text} />
                     <div className="send">
                         {/* <input type="file" style={{ display: "none" }} id="file" accept=".pdf, .rar, .zip" />
                         <label htmlFor="file"> */}
-                        <ul className="menu-horizontal">
-                            <li>
-                                <img className="menu-horizontal" src={Plus} alt=""
-                                // onClick={() => setShowPicker(val => !val)} 
-                                />
-
-                                <ul className="menu-vertical">
-
-                                    <li>
-                                        <img src={Attach} alt="" title="Adjuntar archivo" />
-                                    </li>
-                                    <li>
-                                        <input type="file" style={{ display: "none" }} id="photo" accept="image/*" onChange={e => setImg(e.target.files[0])} />
-                                        <label htmlFor="photo">
-                                            <img src={Img} alt="" title="Adjuntar imagen" />
-
-                                        </label>
-                                    </li>
-                                    <li><img src={Loca} alt="" title="Mandar ubicación" /></li>
-                                </ul>
-                            </li>
-                        </ul>
-
-
-                        {/* <img src={Attach} alt="" title="Adjuntar archivo" /> */}
+                        <img src={Attach} alt="" />
 
                         {/* </label> */}
 
-                        {/* <input type="file" style={{ display: "none" }} id="photo" accept="image/*" onChange={e => setImg(e.target.files[0])} />
+                        <input type="file" style={{ display: "none" }} id="photo" accept="image/*" onChange={e => setImg(e.target.files[0])} />
                         <label htmlFor="photo">
-                            <img src={Img} alt="" title="Adjuntar imagen" />
+                            <img src={Img} alt="" />
 
-                        </label> */}
-                        <button onClick={handleSend} title="Enviar mensaje">Enviar</button>
+                        </label>
+                        <button onClick={handleSend}>Enviar</button>
                     </div>
                 </div>
             );
@@ -169,8 +123,17 @@ const Input = () => {
     }
 
     return (
-        <div>
-            {InsertarIconos(data)}
+        <div className="logout">
+            <div className="centradito2">
+            <img className="img3" src={add3} alt="Logo de Robbin" />
+            <span className="logo">Robbin</span>
+            </div>
+            
+            <a>
+                <button className="btnSalir">
+                    <img className="img2" src={add2} alt="Salir" onClick={() => signOut(auth)} title="Cerrar sesión"/>
+                </button>
+            </a>
         </div>
 
 
@@ -178,4 +141,4 @@ const Input = () => {
     )
 }
 
-export default Input
+export default Logout

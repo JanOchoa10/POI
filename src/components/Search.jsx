@@ -1,4 +1,4 @@
-import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import React, { useEffect, useState, div } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -11,16 +11,18 @@ import { connectStorageEmulator } from "firebase/storage";
 
 const Search = () => {
 
-    const {dispatch} = useContext(ChatContext);
-
+    const { dispatch } = useContext(ChatContext);
     const [username, setUsername] = useState("");
     const [user, setUser] = useState(null);
     const [err, setErr] = useState(false);
     const [err2, setErr2] = useState(false);
+    const [myChats, setMyChats] = useState([]);
 
-    const { currentUser } = useContext(AuthContext)
+    const { currentUser } = useContext(AuthContext);
 
-    // const [users, setUsers] = useState([]);
+    const rooms = []
+
+
 
     const handleSearch = async () => {
 
@@ -39,16 +41,31 @@ const Search = () => {
         if (username !== null && username != "") {
             try {
                 let inicio = 0;
+                // let cantidadDeChats = 0;
                 const querySnapshot = await getDocs(q);
+
+                // const querySnapshot = await getDocs(q, (doc) => {
+                //     setMyChats(doc.data())
+                // });
+
                 querySnapshot.forEach((doc) => {
                     // doc.data() is never undefined for query doc snapshots
                     setUser(doc.data())
+                    //setMyChats(doc.data())
+                    rooms.push(doc.data())
                     inicio++;
                 });
-                //console.error(user.uid)
+                setMyChats(rooms)
+
+                console.log(user.displayName)
+                console.log(myChats)
+                
+                
+
+                // console.log("Cantidad de chats: " + cantidadDeChats);
                 console.log("Cantidad de usuarios coincidentes: " + inicio);
 
-                // setUsers(querySnapshot.doc.data())
+                
 
 
                 if (inicio == 0) {
@@ -80,11 +97,13 @@ const Search = () => {
     };
     const handleKey = (e) => {
         e.code === "Enter" && handleSearch();
-        
     };
 
     const handleSelect = async (u) => {
         //verificar el gtupo (chats in firestore) existe o no, si existe no crear
+        
+        
+        
         const combineId =
             currentUser.uid > user.uid
                 ? currentUser.uid + user.uid
@@ -125,9 +144,9 @@ const Search = () => {
                     },
                     [combineId + ".date"]: serverTimestamp()
                 });
-                
+
             } else {
-                
+
                 // Swal.fire({
                 //     icon: 'error',
                 //     title: '¡Ya existe un chat con ese usuario!',
@@ -136,19 +155,19 @@ const Search = () => {
                 // })
                 //Search.handleSelect(user.userInfo);
             }
-                
-            
+
+
 
 
         } catch (err2) { }
         //Verificar chats de usuarios
         setUser(null);
-        dispatch({type:"CHANGE_USER", payload: u });
-        
-        
+        dispatch({ type: "CHANGE_USER", payload: u });
+
+
         //setUsername("");
 
-        
+
     }
 
     const handleSubmit = async (e) => {
@@ -160,6 +179,7 @@ const Search = () => {
     function focusOut() {
         //console.log(username)
         setErr(false)
+        //setUser(null)
     }
 
     const [chats, setChats] = useState([]);
@@ -168,7 +188,7 @@ const Search = () => {
             const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
                 setChats(doc.data())
             });
-    
+
             return () => {
                 unsub();
             };
@@ -192,32 +212,52 @@ const Search = () => {
                 </form>
 
             </div>
-            {err && <div className="userChat"><span className="userChatInfo">¡Usuario no encontrado!</span></div>}
-            {/* {err2 && Swal.fire({
-                icon: 'error',
-                title: '¡Ya existe chat con ese usuario!',
-                text: 'Revise sus chats para conversar con ese usuario.',
-                confirmButtonText: 'Aceptar',
-            }).then((value) => {
-                window.location.href = "/";
-            })} */}
-            {user && (<div className="userChat" onClick={() => handleSelect(user)}>
-                <img src={user.photoURL} alt="" />
-                <div className="userChatInfo">
-                    <span>{user.displayName}</span>
-                </div>
-            </div>)}
+            {err &&
 
-            {/* {Object.entries(users)?.sort((a,b)=>b[1].date - a[1].date).map((user) => (
-                <div className="userChat" onClick={handleSelect}>
-                <img src={user.photoURL} alt="" />
-                <div className="userChatInfo">
-                    <span>{user.displayName}</span>
+                <div className="overChats2">
+                    <div className="chats">
+                        <div className="userChat">
+                            <span className="userChatInfo">¡Usuario no encontrado!</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            ))} */}
+
+            }
+            {/* {user && (
+
+                <div className="overChats2">
+                    <div className="chats">
+                        <div className="userChat" onClick={() => handleSelect(user)}>
+                            <img src={user.photoURL} alt="" />
+                            <div className="userChatInfo">
+                                <span>{user.displayName}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            )} */}
 
             {/* {listItems} */}
+            {user && (
+                <div className="overChats2">
+                    <div className="chats">
+                        {Object.entries(myChats)?.map((chat) => (
+                            <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1])}>
+                                <img src={chat[1].photoURL} alt="" />
+                                <div className="userChatInfo">
+                                    <span>{chat[1].displayName}</span>
+                                    {/* {usuarioActual(chat)} */}
+
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+
+
         </div>
     )
 }

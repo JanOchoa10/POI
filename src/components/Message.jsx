@@ -18,15 +18,15 @@ const Message = ({ message }) => {
         ref.current?.scrollIntoView({ behavior: "smooth" });
     }, [message]);
 
-    console.log(message)
-    console.log(message.date.toDate())
+    //console.log(message)
+    //console.log(message.date.toDate())
     var currentTimestamp = Date.now()
     var date = new Intl.DateTimeFormat('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }).format(message.date.toDate())
     var today = new Intl.DateTimeFormat('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }).format(currentTimestamp)
     let date1 = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(message.date.toDate())
     //var timestemp = new Date( 1665620418 );
     //var formatted = timestemp.format("dd/mm/yyyy hh:MM:ss");
-    console.log(date)
+    //console.log(date)
     //const today = new Date();
     if (today === date) {
         //console.log(1);
