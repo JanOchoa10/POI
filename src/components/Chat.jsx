@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import Cam from "../img/cam_robbin.png";
-import Add from "../img/add_robbin.png";
-import More from "../img/callicon.png";
+import Add from "../img/more_robbin.png";
+import Call from "../img/callicon.png";
 import Messages from "./Messages";
 import Input from "./Input";
 import add from "../img/bluebird.png";
@@ -11,6 +11,7 @@ import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { connectStorageEmulator } from "firebase/storage";
+
 
 const Chat = () => {
 
@@ -172,9 +173,26 @@ const Chat = () => {
                     <span>{data.user?.displayName}</span>
 
                     <div className="chatIcons">
-                        <img src={More} alt="" onClick={llamada} />
-                        <img src={Cam} alt="" onClick={videollamada} />
-                        <img src={Add} alt="" onClick={agregar} />
+                        <img src={Call} alt="" onClick={llamada} title="Empezar una llamada" />
+                        <img src={Cam} alt="" onClick={videollamada} title="Empezar una videollamada" />
+                        {/* <img src={Add} alt="" onClick={agregar} title="Encriptar tus mensajes"/> */}
+
+                        {/* <!-- Rounded switch --> */}
+                        {/* <label className="switch">
+                            <input type="checkbox">
+                                <span className="slider round"></span>
+                            </input>
+                        </label> */}
+
+
+                        <label className="switch" title="Encriptar tus mensajes">
+                            <input type="checkbox"></input>
+                            <div className="slider round"></div>
+                        </label>
+
+
+
+
 
                     </div>
                 </div>
