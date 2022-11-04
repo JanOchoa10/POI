@@ -27,3 +27,9 @@ Contraseña: JairGzz02!
 Nombre: Melanie Jimenez
 Correo: meljim@gmail.com
 Contraseña: melJ1mz!
+
+6.
+
+Nombre: Bernardo De La Garza
+Correo: deltaNeutro@gmail.com
+Contraseña: deltaNeutro6!

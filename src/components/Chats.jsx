@@ -20,7 +20,7 @@ const Chats = () => {
     let chose = 1;
 
     const changeOption = (chose) => {
-        
+
 
         switch (chose) {
             case 1: {
@@ -42,7 +42,7 @@ const Chats = () => {
                 break;
         }
 
-    }  
+    }
 
 
     const [chats, setChats] = useState([]);
@@ -69,25 +69,26 @@ const Chats = () => {
     const handleSelect = (u) => {
         dispatch({ type: "CHANGE_USER", payload: u });
     }
-
-    function hola(){
-        handleSelect("")
-    }
-
+    
     const usuarioActual = (chat) => {
-        if (chat[1].lastMessage.senderId == currentUser.uid) {
-            return (
-                <p>{'Tú: ' + chat[1].lastMessage?.text}</p>
-            );
-        } else {
-            return (
-                <p>{chat[1].lastMessage?.text}</p>
-            );
+
+        if (chat[1].lastMessage?.text !== undefined) {
+
+            if (chat[1].lastMessage.senderId == currentUser.uid) {
+                return (
+                    <p>{'Tú: ' + chat[1].lastMessage?.text}</p>
+                );
+            } else {
+                return (
+                    <p>{chat[1].lastMessage?.text}</p>
+                );
+            }
         }
+
     }
 
     return (
-        
+
         <div className="overChats">
 
             <div className="tab-container">
