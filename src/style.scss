@@ -378,6 +378,7 @@
             padding: 0;
             margin: 0;
             overflow: hidden;
+
             /* Menú en tabs */
             .tab-container {
 
@@ -885,48 +886,56 @@ input:checked+.slider:before {
     padding: 20px;
     transform: translate3d(18%, -10%, 0);
     overflow-y: auto;
-    
-    .crear{
-        display: flex;
+
+    .crear {
+        display: grid;
         width: 100%;
-        gap: 10px;
+        margin: auto;
         align-items: center;
+        row-gap: 10px;
         
-        .grupo-active {
-            //display: none;
-            height: 20px;
-            background-color: white;
-            border-radius: 50px;
-            max-width: 300px;
-            //transform: translate3d(10%, -10%, 0);
-            background-color: gray;
-            border: none;
-            color: white;
-            outline: none;
-            padding: 10px;
-            width: 250%;
-    
-            &::placeholder {
-                color: lightgray;
+
+        .secciones {
+            display: flex;
+            gap: 10px;
+            .grupo-active {
+                //display: none;
+                height: 20px;
+                background-color: white;
+                border-radius: 50px;
+                max-width: 93%;
+                //transform: translate3d(10%, -10%, 0);
+                background-color: gray;
+                border: none;
+                color: white;
+                outline: none;
+                padding: 10px;
+                width: 250%;
+
+                &::placeholder {
+                    color: lightgray;
+                }
+            }
+
+            .myBtn {
+                // margin-top: 25px;
+                background-color: #E0775A;
+                color: white;
+                padding: 10px;
+                margin-right: 5px;
+                border: none;
+                cursor: pointer;
+                border-radius: 10px;
+                width: 100%;
+            }
+
+
+            .myBtn:hover {
+                background-color: #966244;
             }
         }
-    
-        .myBtn {
-            // margin-top: 25px;
-            background-color: #E0775A;
-            color: white;
-            padding: 10px;
-            margin-right: 5px;
-            border: none;
-            cursor: pointer;
-            border-radius: 10px;
-            width: 100%;
-        }
-    
-    
-        .myBtn:hover {        
-            background-color: #966244;
-        }
+
+
     }
 
     .overChats3 {
@@ -976,16 +985,16 @@ input:checked+.slider:before {
             }
         }
 
-        
+
     }
 
-    
+
 }
 
 .miGrupo::-webkit-scrollbar {
     width: 5px;
     //background: #966244;
-    
+
 }
 
 .miGrupo::-webkit-scrollbar-thumb {
@@ -993,7 +1002,7 @@ input:checked+.slider:before {
     background: #EBBB8D9d;
     border-radius: 10px;
     //border-right: 2px solid #4444449d;
-    
+
 }
 
 .miGrupo::-webkit-scrollbar-thumb:hover {

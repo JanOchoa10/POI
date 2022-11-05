@@ -14,6 +14,7 @@ import { EmojiService, emoji_list } from "emoji-library";
 import "emoji-selector";
 import { isDocument } from "@testing-library/user-event/dist/utils";
 import { onSnapshot } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 
 const Input = () => {
@@ -53,7 +54,7 @@ const Input = () => {
     var idSeparadas = []
     const misIDs = data.user.uid
     const handleSend = async () => {
-       // console.log('Mi cadena de iDS: \n')
+        // console.log('Mi cadena de iDS: \n')
         //console.log(misIDs)
         //console.log("Mis ids: \n")
 
@@ -125,35 +126,68 @@ const Input = () => {
             // Separamos las ids para agregarles los datos a
 
             idSeparadas = misIDs.split(',')
-            idSeparadas.pop()
+
+            // for(let i = 0; i<idSeparadas.length; i++){
+            //     if(idSeparadas[i] === ""){
+            //         idSeparadas.splice(i,0)
+            //     }
+            // }
+            idSeparadas = idSeparadas.filter((item) => item !== '')
+
+
+            idSeparadas.push(currentUser.uid)
+
+            idSeparadas.sort().reverse()
+
+            console.log("Id separadas:\n")
+            console.log(idSeparadas)
+
             //console.log(idSeparadas)
 
             //TODO
-            // for (let i = 0; i < idSeparadas.length; i++) {
-            //     await updateDoc(doc(db, "userChats", idSeparadas[i]), {
-            //         [data.chatId + ".lastMessage"]: {
-            //             text,
-            //             senderId: currentUser.uid,
-            //         },
-            //         [data.chatId + ".date"]: serverTimestamp(),
-            //     });
-            // }
 
-            await updateDoc(doc(db, "userChats", currentUser.uid), {
-                [data.chatId + ".lastMessage"]: {
-                    text,
-                    senderId: currentUser.uid,
-                },
-                [data.chatId + ".date"]: serverTimestamp(),
-            });
-    
-            await updateDoc(doc(db, "userChats", data.user.uid), {
-                [data.chatId + ".lastMessage"]: {
-                    text,
-                    senderId: currentUser.uid,
-                },
-                [data.chatId + ".date"]: serverTimestamp(),
-            });
+            // await updateDoc(doc(db, "userChats", currentUser.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
+
+
+            if (idSeparadas.length <= 2) {
+                for (let i = 0; i < idSeparadas.length; i++) {
+                    await updateDoc(doc(db, "userChats", idSeparadas[i]), {
+                        [data.chatId + ".lastMessage"]: {
+                            text,
+                            senderId: currentUser.uid,
+                        },
+                        [data.chatId + ".date"]: serverTimestamp(),
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Más de 2 id',
+                    confirmButtonText: 'De acuerdo'
+                })
+            }
+
+            // await updateDoc(doc(db, "userChats", currentUser.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
+
+            // await updateDoc(doc(db, "userChats", data.user.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
 
 
         } catch (err) {

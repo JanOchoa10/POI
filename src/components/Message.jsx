@@ -6,7 +6,7 @@ import add1 from "../img/robbin.jpg";
 import add2 from "../img/robbin2.jpg";
 import add3 from "../img/robbin3.jpg";
 import add4 from "../img/bluebird.png";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, query, collection, orderBy, startAt, endAt, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
 const Message = ({ message }) => {
@@ -26,6 +26,7 @@ const Message = ({ message }) => {
     idSeparadas.pop()
 
     const [chats, setChats] = useState([]);
+    const [misUsuarios, setMisUsuarios] = useState([]);
 
     useEffect(() => {
         const getChats = () => {
@@ -44,11 +45,54 @@ const Message = ({ message }) => {
         chat[1].userInfo.uid
     ))
 
-    const fotosDeChatDelUsuarioActual = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
-        chat[1].userInfo.photoURL
+    const rooms = []
+    const qVacio = query(
+        collection(db, "users"),
+        //where("displayName", "==", username)
+        orderBy('displayName'), startAt(""), endAt("" + '\uf8ff')
+    );
+
+    const myCambio = async () => {
+        const querySnapshot = await getDocs(qVacio);
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            rooms.push(doc.data())
+        });
+        setMisUsuarios(rooms)
+    }
+
+    if(misUsuarios.length <= 0){
+        //myCambio() //Descomentar para las imágenes de los chats
+        console.log("Usuarios guardados")
+    } else {
+        console.log(misUsuarios.length)
+    }
+
+    //console.log(misUsuarios)
+    //myCambio()
+
+    // useEffect(() => {
+    //     const getChats = () => {
+    //         const unsub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
+    //             setMisUsuarios(doc.data())
+    //         });
+
+    //         return () => {
+    //             unsub();
+    //         };
+    //     };
+    //     currentUser.uid && getChats()
+    // }, [currentUser.uid]);
+    //myCambio()
+
+    const fotosDeChatDelUsuarioActual = Object.entries(misUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+        //chat[1].userInfo.photoURL
+        chat
     ))
 
-    //console.log(chatsDelUsuarioActual)
+    // console.log(message.senderId)
+    // console.log(chatsDelUsuarioActual)
+    // console.log(fotosDeChatDelUsuarioActual)
 
     //console.log(message)
     //console.log(message.date.toDate())
@@ -69,15 +113,23 @@ const Message = ({ message }) => {
     var imagenURL = ""
 
 
-    if(message.senderId === currentUser.uid){
+    if (message.senderId === currentUser.uid) {
         imagenURL = currentUser.photoURL
     } else {
-        for(let i = 0; i<chatsDelUsuarioActual.length; i++){
-            if(message.senderId == chatsDelUsuarioActual[i]){
-                imagenURL = fotosDeChatDelUsuarioActual[i]
-                break;
-            }
-        }
+        //imagenURL =  data.user.photoURL
+        // for (let i = 0; i < chatsDelUsuarioActual.length; i++) {
+            // if (message.senderId == chatsDelUsuarioActual[i]) {
+                //imagenURL = fotosDeChatDelUsuarioActual[i]
+
+                for(let k= 0; k<fotosDeChatDelUsuarioActual.length; k++){
+                    if(fotosDeChatDelUsuarioActual[k][1].uid == message.senderId){
+                        imagenURL = fotosDeChatDelUsuarioActual[k][1].photoURL
+                    }
+                }
+
+                // break;
+            // }
+        // }
     }
 
     return (
