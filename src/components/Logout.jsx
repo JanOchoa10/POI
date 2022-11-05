@@ -11,6 +11,7 @@ import add3 from "../img/logo_robbin.png";
 import add2 from "../img/out_2.png";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import Swal from 'sweetalert2'
 
 const Logout = () => {
 
@@ -87,6 +88,21 @@ const Logout = () => {
         e.code === "Enter" && handleSend();
     };
 
+    const cerrarSesionAlert = () => {
+        Swal.fire({
+            icon: 'question',
+            title: '¿Deseas cerrar sesión?',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: `Cancelar`,
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                signOut(auth)
+            }
+          })
+
+    }
 
     function InsertarIconos(data) {
 
@@ -131,7 +147,7 @@ const Logout = () => {
             
             <a>
                 <button className="btnSalir">
-                    <img className="img2" src={add2} alt="Salir" onClick={() => signOut(auth)} title="Cerrar sesión"/>
+                    <img className="img2" src={add2} alt="Salir" onClick={cerrarSesionAlert} title="Cerrar sesión"/>
                 </button>
             </a>
         </div>

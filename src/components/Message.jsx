@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import add from "../img/bluebird_56.png";
@@ -6,6 +6,8 @@ import add1 from "../img/robbin.jpg";
 import add2 from "../img/robbin2.jpg";
 import add3 from "../img/robbin3.jpg";
 import add4 from "../img/bluebird.png";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Message = ({ message }) => {
 
@@ -17,6 +19,36 @@ const Message = ({ message }) => {
     useEffect(() => {
         ref.current?.scrollIntoView({ behavior: "smooth" });
     }, [message]);
+
+    var idSeparadas = []
+    const misIDs = data.user.uid
+    idSeparadas = misIDs.split(',')
+    idSeparadas.pop()
+
+    const [chats, setChats] = useState([]);
+
+    useEffect(() => {
+        const getChats = () => {
+            const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+                setChats(doc.data())
+            });
+
+            return () => {
+                unsub();
+            };
+        };
+        currentUser.uid && getChats()
+    }, [currentUser.uid]);
+
+    const chatsDelUsuarioActual = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+        chat[1].userInfo.uid
+    ))
+
+    const fotosDeChatDelUsuarioActual = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+        chat[1].userInfo.photoURL
+    ))
+
+    //console.log(chatsDelUsuarioActual)
 
     //console.log(message)
     //console.log(message.date.toDate())
@@ -33,6 +65,21 @@ const Message = ({ message }) => {
         date = 'HOY';
     }
 
+
+    var imagenURL = ""
+
+
+    if(message.senderId === currentUser.uid){
+        imagenURL = currentUser.photoURL
+    } else {
+        for(let i = 0; i<chatsDelUsuarioActual.length; i++){
+            if(message.senderId == chatsDelUsuarioActual[i]){
+                imagenURL = fotosDeChatDelUsuarioActual[i]
+                break;
+            }
+        }
+    }
+
     return (
         <div
             ref={ref}
@@ -40,9 +87,7 @@ const Message = ({ message }) => {
         >
             <div className="messageInfo">
                 <img src={
-                    message.senderId === currentUser.uid
-                        ? currentUser.photoURL
-                        : data.user.photoURL
+                    imagenURL
                 }
                     alt="" />
                 <p>{date}</p>

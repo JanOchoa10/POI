@@ -266,6 +266,7 @@ const Register = () => {
                     });
 
                     await setDoc(doc(db, "userChats", res.user.uid), {});
+                    //await setDoc(doc(db, "userGroups", res.user.uid), {});
                     Swal.fire({
                         icon: 'success',
                         title: '¡Registro exitoso!',
