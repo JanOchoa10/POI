@@ -89,8 +89,6 @@ const Logout = () => {
     };
 
     const cerrarSesionAlert = () => {
-        
-
         Swal.fire({
             icon: 'question',
             title: '¿Deseas cerrar sesión?',

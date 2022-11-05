@@ -63,13 +63,41 @@ const Chats = () => {
         currentUser.uid && getChats()
     }, [currentUser.uid]);
 
-    //console.log(chats)
-    //console.log(Object.entries(chats));
+
+
+
+    // const chatsDelUsuarioActual = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+    //     chat[1].userInfo.uid
+    // ))
+
+    // for (let i = 0; i < chatsDelUsuarioActual.length; i++) {
+
+    //     if (chatsDelUsuarioActual[i] == "5pZJaz2t0Od2odur7AwfUQNgKjV2MgGb3cQszFds1bHMKmyEbu01vmx1PX9XSJAUx2OiSZ0lq1bBBRgB3iF2") {
+    //         chatsDelUsuarioActual.splice(i, 1)
+    //     }
+    // }
+    // //console.log(chatsDelUsuarioActual)
+
+    // console.log("Mychats: " + Object.entries(chats).map((chat) => (chat[1].userInfo.uid)))
+
+    // const [chats2, setChats2] = useState([]);
+    // function removeObjectWithId(arr, id) {
+    //     // Making a copy with the Array from() method
+    //     const arrCopy = Array.from(arr);
+      
+    //     const objWithIdIndex = arrCopy.findIndex((obj) => obj.id === id);
+    //     arrCopy.splice(objWithIdIndex, 1);
+    //     return arrCopy;
+    //   }
+    //   const newArr = removeObjectWithId(chats, 0);
+    //   console.log(newArr)
+    //   setChats2(removeObjectWithId(chats, 0))
+    //   console.log("Mychats 2: " + Object.entries(chats2).map((chat) => (chat[1].userInfo.uid)))
 
     const handleSelect = (u) => {
         dispatch({ type: "CHANGE_USER", payload: u });
     }
-    
+
     const usuarioActual = (chat) => {
 
         if (chat[1].lastMessage?.text !== undefined) {

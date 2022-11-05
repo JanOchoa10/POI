@@ -24,7 +24,9 @@ const Navbar = () => {
     const rooms = []
 
     const [listaDeInte, setLista] = useState([])
+
     var grupoId = ""
+    // var listaIDS = ""
 
     // handleSelect("")
     const myConstante = () => {
@@ -48,6 +50,12 @@ const Navbar = () => {
         } else {
             miDoc.removeAttribute('hidden');
         }
+        // Limpiamos los usuarios filtrados en rooms
+        rooms.length += rooms.length
+        setMyChats(rooms)
+
+        // Y limpiamos los usuarios agregados en listaDeInte
+        listaDeInte.length -= listaDeInte.length
     }
 
     const handleSearch = async () => {
@@ -138,128 +146,95 @@ const Navbar = () => {
         e.preventDefault();
 
         e.target.reset();
-        
+
     }
 
     const handleSelect = async (u) => {
-        //ocultarInput()
+        
+        if (listaDeInte.length > 0) {
 
 
-        //verificar el gtupo (chats in firestore) existe o no, si existe no crear
-        const combineId =
-            currentUser.uid > user.uid
-                ? currentUser.uid + user.uid
-                : user.uid + currentUser.uid;
 
+            if (currentUser.uid == u.uid) {
+                //No registra porque ya existe
+                console.warn("EL USUARIO ACTUAL NO PUEDE REGISTRARSE EN EL GRUPO")
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Ya agregado al grupo!',
+                    text: 'El usuario actual ya se encuentra dentro del grupo.',
+                    confirmButtonText: 'Aceptar'
+                    // footer: '<a href="">Why do I have this issue?</a>'
+                })
+            } else {
+                let siExisteYa = false
+                for (let i = 0; i < listaDeInte.length; i++) {
+                    if (listaDeInte[i] == u.uid) {
+                        //No registra porque ya existe
+                        console.warn("YA EXISTE ESE USUARIO")
+                        Swal.fire({
+                            icon: 'question',
+                            title: '¡Usuario ya agregado!',
+                            text: '¿Desea borrar al usuario del grupo',
+                            showCancelButton: true,
+                            confirmButtonText: 'Borrar',
+                            cancelButtonText: `Cancelar`,
+                        }).then((result) => {
+                            /* Read more about isConfirmed, isDenied below */
+                            if (result.isConfirmed) {
+                                
+                                listaDeInte.splice(i, 1)
+                                
+                            }
+                        })
+                        siExisteYa = true
+                        break;
+                    }
+                }
+                if (!siExisteYa) {
+                    const queso = listaDeInte.push(u.uid);
+                }
+            }
 
-        // console.log("Lista const: " + listaDeInte)
-        // listaDeInte.push(combineId)
-        // console.log("Lista const: " + listaDeInte)
-
-
-        console.log("Aqui: " + listaDeInte);
-        const queso = listaDeInte.push(user.uid);
-        // setLista(user.uid)
-        console.log("Aqui: " + listaDeInte);
-
-
-        for (let i = 0; i < listaDeInte.length; i++) {
-            grupoId = grupoId + listaDeInte[i]
+        } else {
+            if (currentUser.uid == u.uid) {
+                //No registra porque ya existe
+                console.warn("EL USUARIO ACTUAL NO PUEDE REGISTRARSE EN EL GRUPO")
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Ya agregado al grupo!',
+                    text: 'El usuario actual ya se encuentra dentro del grupo.',
+                    confirmButtonText: 'Aceptar'
+                    
+                })
+            } else {
+                const queso = listaDeInte.push(u.uid);
+            }
         }
-        console.log("IdsGroup: " + grupoId)
 
-        // const aux = ""
-        // const listaOredenada = listaDeInte
-
-
-
-
-        // for(let i = 0; i<listaDeInte.length; i++){
-        //     listaDeInte[i] > listaDeInte[i+1]
-        //         ? listaDeInte[i] + listaDeInte[i+1]
-        //         : user.uid + currentUser.uid;
-        // }
-
-        // for (let k = 0; k < listaOredenada.length; k++) {
-        //     for (let i = 0; i < (listaOredenada.length - k); i++) {
-        //         if (listaOredenada[i] > listaOredenada[i + 1]) {
-        //             aux = listaOredenada[i];
-        //             listaOredenada[i] = listaOredenada[i + 1];
-        //             listaOredenada[i + 1] = aux;
-        //         }
-        //     }
-        // }
-
-        //console.log("Lista original: " + listaDeInte +"\nLista ordenada: " +listaOredenada)
-
-
-        // try {
-
-
-
-        //     const res = await getDoc(doc(db, "chats", combineId));
-
-        //     if (!res.exists()) {
-        //         //crear un chat en la coleccion de chats
-        //         await setDoc(doc(db, "chats", combineId), { messages: [] });
-
-        //     //crear chat de usuario
-        //     /*userChats:{
-        //         janesid:{
-        //             combineId:{
-        //                 userInfo{
-        //                     dn, img, id 
-        //                 },
-        //                 lastMessage:"",
-        //                 date:
-        //             }
-        //         }
-        //     }*/
-        //     await updateDoc(doc(db, "userChats", currentUser.uid), {
-        //         [combineId + ".userInfo"]: {
-        //             uid: user.uid,
-        //             displayName: user.displayName,
-        //             photoURL: user.photoURL,
-        //         },
-        //         [combineId + ".date"]: serverTimestamp()
-        //     });
-
-        //     await updateDoc(doc(db, "userChats", user.uid), {
-        //         [combineId + ".userInfo"]: {
-        //             uid: currentUser.uid,
-        //             displayName: currentUser.displayName,
-        //             photoURL: currentUser.photoURL,
-        //         },
-        //         [combineId + ".date"]: serverTimestamp()
-        // });
-
-        // } else {
-
-        // Swal.fire({
-        //     icon: 'error',
-        //     title: '¡Ya existe un chat con ese usuario!',
-        //     text: 'Revise sus chats para conversar con ese usuario.',
-        //     confirmButtonText: 'Aceptar',
-        // })
-        //Search.handleSelect(user.userInfo);
-        // }
-
-
-
-
-        // } catch (err2) { }
-        //Verificar chats de usuarios
-        //setUser(null);
-        //dispatch({ type: "CHANGE_USER", payload: u });
-
-
-        //setUsername("");
-
+        
 
     }
 
     const crearGrupo = async (u) => {
         try {
+            
+            
+
+            //Se agrega usuario que crea el grupo
+            listaDeInte.push(currentUser.uid);
+            const listaOrdenada = listaDeInte.sort()
+
+            //Imprimimos los usuarios seleccionados
+            grupoId = ""
+            for (let i = 0; i < listaOrdenada.length; i++) {
+                grupoId = grupoId + listaOrdenada[i] +","
+            }
+
+            // listaIDS = ""
+            // for (let i = 0; i < listaOrdenada.length; i++) {
+            //     listaIDS = listaIDS + listaOrdenada[i] +","
+            // }
+
 
             const combineId = grupoId
 
@@ -268,57 +243,18 @@ const Navbar = () => {
             if (!res.exists()) {
                 //crear un chat en la coleccion de grupos
                 await setDoc(doc(db, "chats", combineId), { messages: [] });
+                //Asignamos el grupo creado a cada usuario
+                for (let i = 0; i< listaOrdenada.length; i++){
 
-                //crear chat de usuario
-                /*userChats:{
-                    janesid:{
-                        combineId:{
-                            userInfo{
-                                dn, img, id 
-                            },
-                            lastMessage:"",
-                            date:
-                        }
-                    }
-                }*/
-                for (let i = 0; i < listaDeInte.length; i++) {
-                    await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    await updateDoc(doc(db, "userChats", listaOrdenada[i]), {
                         [combineId + ".userInfo"]: {
-                            uid: listaDeInte[i].uid,
-                            displayName: listaDeInte[i].displayName,
-                            photoURL: listaDeInte[i].photoURL,
+                            uid: combineId,
+                            displayName: 'Grupo 1',
+                            photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                         },
                         [combineId + ".date"]: serverTimestamp()
                     });
                 }
-
-
-                for (let i = 0; i < listaDeInte.length; i++) {
-                    for (let j = 0; j < listaDeInte.length; j++) {
-                        if (listaDeInte[j] == listaDeInte[i]) {
-
-                        } else {
-                            await updateDoc(doc(db, "userChats", listaDeInte[i].uid), {
-                                [combineId + ".userInfo"]: {
-                                    uid: listaDeInte[j].uid,
-                                    displayName: listaDeInte[j].displayName,
-                                    photoURL: listaDeInte[j].photoURL,
-                                },
-                                [combineId + ".date"]: serverTimestamp()
-                            });
-                        }
-                    }
-                    await updateDoc(doc(db, "userChats", listaDeInte[i].uid), {
-                        [combineId + ".userInfo"]: {
-                            uid: currentUser.uid,
-                            displayName: currentUser.displayName,
-                            photoURL: currentUser.photoURL,
-                        },
-                        [combineId + ".date"]: serverTimestamp()
-                    });
-                }
-
-
 
             } else {
 
@@ -328,20 +264,22 @@ const Navbar = () => {
                     text: 'Revise sus chats para conversar con ese usuario.',
                     confirmButtonText: 'Aceptar',
                 })
-                //Navbar.crearGrupo(user.userInfo);
+                
             }
 
 
 
 
-        } catch (err2) { console.log('Error, a mimir: ' + err2) }
-        //Verificar chats de usuarios
-        //setUser(null);
-        //dispatch({ type: "CHANGE_USER", payload: u });
+        } catch (err2) {
+            console.error('Error, a mimir: ' + err2)
+        }
+        // setUser(null);
+        // dispatch({ type: "CHANGE_USER", payload: u });
 
 
         //setUsername("");
         ocultarInput()
+        //console.warn('Lista borrada?: '+listaDeInte+'\nCantidad de elementos: '+listaDeInte.length)
     }
 
     return (
@@ -374,7 +312,7 @@ const Navbar = () => {
                                     onBlur={focusOut} />
 
                                 <input type="button" className="myBtn" value="Crear grupo"
-                                   onClick={crearGrupo} />
+                                    onClick={crearGrupo} />
                             </form>
 
                         </div>
@@ -393,6 +331,7 @@ const Navbar = () => {
                             <div className="overChats3">
                                 <div className="chats">
                                     {Object.entries(myChats)?.map((chat) => (
+
                                         <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1])}>
                                             <img src={chat[1].photoURL} alt="" />
                                             <div className="userChatInfo">
@@ -401,6 +340,7 @@ const Navbar = () => {
 
                                             </div>
                                         </div>
+
                                     ))}
                                 </div>
                             </div>

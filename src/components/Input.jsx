@@ -12,6 +12,7 @@ import Loca from "../img/Location.png";
 import emoji from 'emoji-library';
 import { EmojiService, emoji_list } from "emoji-library";
 import "emoji-selector";
+import { isDocument } from "@testing-library/user-event/dist/utils";
 
 
 const Input = () => {
@@ -27,62 +28,70 @@ const Input = () => {
     const { currentUser } = useContext(AuthContext)
     const { data } = useContext(ChatContext)
 
+    var idSeparadas = []
+
     const handleSend = async () => {
 
-        if (img) {
-            const storageRef = ref(storage, uuid());
+        try {
+            if (img) {
+                const storageRef = ref(storage, uuid());
 
-            const uploadTask = uploadBytesResumable(storageRef, img);
+                const uploadTask = uploadBytesResumable(storageRef, img);
 
-            uploadTask.on(
-                (error) => {
-                    //setErr(true);
-                },
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                        //getDownloadURL(storageRef).then(async (downloadURL) => {
-                        await updateDoc(doc(db, "chats", data.chatId), {
-                            messages: arrayUnion({
-                                id: uuid(),
-                                text,
-                                senderId: currentUser.uid,
-                                date: Timestamp.now(),
-                                img: downloadURL,
-                            }),
+                uploadTask.on(
+                    (error) => {
+                        console.log("Mi error: " + error)
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                            //getDownloadURL(storageRef).then(async (downloadURL) => {
+                            await updateDoc(doc(db, "chats", data.chatId), {
+                                messages: arrayUnion({
+                                    id: uuid(),
+                                    text,
+                                    senderId: currentUser.uid,
+                                    date: Timestamp.now(),
+                                    img: downloadURL,
+                                }),
+
+                            });
 
                         });
+                    }
+                );
 
-                    });
-                }
-            );
+            } else {
+                await updateDoc(doc(db, "chats", data.chatId), {
+                    messages: arrayUnion({
+                        id: uuid(),
+                        text,
+                        senderId: currentUser.uid,
+                        date: Timestamp.now(),
+                    }),
 
-        } else {
-            await updateDoc(doc(db, "chats", data.chatId), {
-                messages: arrayUnion({
-                    id: uuid(),
-                    text,
-                    senderId: currentUser.uid,
-                    date: Timestamp.now(),
-                }),
-
-            });
+                });
+            }
+        } catch (err) {
+            console.log("Imagen: " + err)
         }
-
-        await updateDoc(doc(db, "userChats", currentUser.uid), {
-            [data.chatId + ".lastMessage"]: {
-                text,
-                senderId: currentUser.uid,
-            },
-            [data.chatId + ".date"]: serverTimestamp(),
-        });
-
-        await updateDoc(doc(db, "userChats", data.user.uid), {
-            [data.chatId + ".lastMessage"]: {
-                text,
-                senderId: currentUser.uid,
-            },
-            [data.chatId + ".date"]: serverTimestamp(),
-        });
+        
+        try {
+            // Separamos las ids para agregarles los datos a
+            const misIDs = data.user.uid
+            idSeparadas = misIDs.split(',')
+            idSeparadas.pop()
+            for (let i = 0; i < idSeparadas.length; i++) {
+                await updateDoc(doc(db, "userChats", idSeparadas[i]), {
+                    [misIDs + ".lastMessage"]: {
+                        text,
+                        senderId: currentUser.uid,
+                    },
+                    [misIDs + ".date"]: serverTimestamp(),
+                });
+            }
+        } catch (err) {
+            console.log("Usuario destino: " + err)
+        }
 
         setText("");
         setImg(null);
