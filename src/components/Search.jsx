@@ -109,9 +109,23 @@ const Search = () => {
                 ? currentUser.uid + u.uid
                 : u.uid + currentUser.uid;
 
+        // var misClaves = []
+        // misClaves.push(u.uid)
+        // misClaves.push(currentUser.uid)
+
+        // const claOrdenadas = misClaves.sort()
+
+        // var grupoId = ""
+        // for (let i = 0; i < claOrdenadas.length; i++) {
+        //     grupoId = grupoId + claOrdenadas[i] + ","
+        // }
+
+        // const combineId = grupoId
 
 
-                
+
+
+        //TODO
         console.log(combineId)
         try {
             const res = await getDoc(doc(db, "chats", combineId));
@@ -120,18 +134,7 @@ const Search = () => {
                 //crear un chat en la coleccion de chats
                 await setDoc(doc(db, "chats", combineId), { messages: [] });
 
-                //crear chat de usuario
-                /*userChats:{
-                    janesid:{
-                        combineId:{
-                            userInfo{
-                                dn, img, id 
-                            },
-                            lastMessage:"",
-                            date:
-                        }
-                    }
-                }*/
+
                 await updateDoc(doc(db, "userChats", currentUser.uid), {
                     [combineId + ".userInfo"]: {
                         uid: u.uid,
