@@ -313,7 +313,8 @@ const Navbar = () => {
                         photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                     },
                     [combineId + ".date"]: serverTimestamp(),
-                    [combineId + ".tipoDeChat"]: "Grupo"
+                    [combineId + ".tipoDeChat"]: "Grupo",
+                    [combineId + ".encriptado"]: "Descrifrado",
                 });
                 // }
 
@@ -329,7 +330,8 @@ const Navbar = () => {
                                 photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                             },
                             [combineId + ".date"]: serverTimestamp(),
-                            [combineId + ".tipoDeChat"]: "Grupo"
+                            [combineId + ".tipoDeChat"]: "Grupo",
+                            [combineId + ".encriptado"]: "Descrifrado",
                         });
                     }
                 } else {
@@ -350,7 +352,8 @@ const Navbar = () => {
                                 photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                             },
                             [combineId + ".date"]: serverTimestamp(),
-                            [combineId + ".tipoDeChat"]: "Grupo"
+                            [combineId + ".tipoDeChat"]: "Grupo",
+                            [combineId + ".encriptado"]: "Descrifrado",
                         });
                     }
                 }

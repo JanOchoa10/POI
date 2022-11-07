@@ -142,7 +142,8 @@ const Search = () => {
                         photoURL: u.photoURL,
                     },
                     [combineId + ".date"]: serverTimestamp(),
-                    [combineId + ".tipoDeChat"]: "Chat"
+                    [combineId + ".tipoDeChat"]: "Chat",
+                    [combineId + ".encriptado"]: "Descrifrado",
                 });
 
                 await updateDoc(doc(db, "userChats", u.uid), {
@@ -152,7 +153,8 @@ const Search = () => {
                         photoURL: currentUser.photoURL,
                     },
                     [combineId + ".date"]: serverTimestamp(),
-                    [combineId + ".tipoDeChat"]: "Chat"
+                    [combineId + ".tipoDeChat"]: "Chat",
+                    [combineId + ".encriptado"]: "Descrifrado",
                 });
 
             } else {

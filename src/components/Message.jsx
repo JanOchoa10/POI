@@ -46,7 +46,7 @@ const Message = ({ message }) => {
         chat[1].userInfo.uid
     ))
 
-    
+
 
     //Número 3 para probar
     const rooms = []
@@ -69,7 +69,7 @@ const Message = ({ message }) => {
         //     return{
         //         doc,
         //     }
-            
+
         // });
 
         setMisUsuarios(rooms)
@@ -83,24 +83,30 @@ const Message = ({ message }) => {
 
     var idGigante = idSeparadas2[0]
     var cantCaracteres = idGigante.length
-    var cantDeSep = cantCaracteres/28
+    var cantDeSep = cantCaracteres / 28
     var recorridos = 0
 
     var inicio = 0, fin = 28
 
-    for(let i = 0; i<cantDeSep; i++){
+    for (let i = 0; i < cantDeSep; i++) {
         idSeparadas2[i] = idGigante.substring(inicio, fin)
         inicio = fin
         fin += 28
     }
 
-    
+
     // for(let i = 0; i<idSeparadas2.length; i++){
     //     if(idSeparadas2[i] === ""){
     //         idSeparadas2.splice(i,0)
     //     }
     // }
     idSeparadas2 = idSeparadas2.filter((item) => item !== '')
+
+    //Sin usuario actual
+    var idDelChatSinUA = ""
+    for (let i = 0; i < idSeparadas2.length; i++) {
+        idDelChatSinUA = idDelChatSinUA + idSeparadas2[i]
+    }
 
 
     idSeparadas2.push(currentUser.uid)
@@ -111,7 +117,7 @@ const Message = ({ message }) => {
     console.log(idSeparadas2)
 
     var indiceDeBusqueda = ""
-    for(let i = 0; i<idSeparadas2.length; i++){
+    for (let i = 0; i < idSeparadas2.length; i++) {
         indiceDeBusqueda = indiceDeBusqueda + idSeparadas2[i]
     }
     console.log("Mi indice de busqueda:")
@@ -122,9 +128,9 @@ const Message = ({ message }) => {
 
     //TODO PARA MOSTRAR IMÁGENES
     if (misUsuarios.length <= 0) {
-       myCambio() //Descomentar para las imágenes de los chats
+        myCambio() //Descomentar para las imágenes de los chats
         //console.log("Usuarios guardados")
-        
+
     } else {
         // console.log("Usuarios pre-consultados")
         // console.log(misUsuarios.length)
@@ -177,11 +183,34 @@ const Message = ({ message }) => {
         // }
     }
 
+    // const desci = Object.entries(chats)?.filter(chat => chat[1].userInfo.uid == idDelChatSinUA).map((chat) => (
+    //     chat[1].encriptado
+    // ))
+    var estaEncriptado = message.encriptado
+
+    console.log(estaEncriptado)
+
+    var miTexto = message.miTextoEncriptado + ""
+    var textoDelMensaje = ""
+    if (estaEncriptado == "Encriptado") {
+        for (let i = 0; i < miTexto.length; i++) {
+            let asciiDelCaracter = 0
+            asciiDelCaracter = miTexto[i].charCodeAt(0);
+            asciiDelCaracter--
+
+            let miLetraSiguiente = String.fromCharCode(asciiDelCaracter);
+
+            textoDelMensaje += miLetraSiguiente
+        }
+    } else {
+        textoDelMensaje = miTexto
+    }
+
+
     return (
         <div
             ref={ref}
-            className={`message ${message.senderId === currentUser.uid && "owner"}`}
-        >
+            className={`message ${message.senderId === currentUser.uid && "owner"}`}>
             <div className="messageInfo">
                 <img src={
                     imagenURL
@@ -191,7 +220,7 @@ const Message = ({ message }) => {
                 <p>{date1}</p>
             </div>
             <div className="messageContent">
-                <p>{message.text}</p>
+                <p>{textoDelMensaje}</p>
                 {message.img && <img src={message.img} alt="" />}
             </div>
         </div>

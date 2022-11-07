@@ -73,45 +73,84 @@ const Input = () => {
 
         // Separamos las ids para agregarles los datos a
 
-            //TODO
-            //En vez de separar por comas, separar por cantidad de carácteres
-            idSeparadas = misIDs.split(',')
+        //TODO
+        //En vez de separar por comas, separar por cantidad de carácteres
+        idSeparadas = misIDs.split(',')
 
-            var idGigante = idSeparadas[0]
-            var cantCaracteres = idGigante.length
-            var cantDeSep = cantCaracteres/28
-            var recorridos = 0
+        var idGigante = idSeparadas[0]
+        var cantCaracteres = idGigante.length
+        var cantDeSep = cantCaracteres / 28
+        var recorridos = 0
 
-            var inicio = 0, fin = 28
+        var inicio = 0, fin = 28
 
-            for(let i = 0; i<cantDeSep; i++){
-                idSeparadas[i] = idGigante.substring(inicio, fin)
-                inicio = fin
-                fin += 28
-            }
-
-            
-            // for(let i = 0; i<idSeparadas.length; i++){
-            //     if(idSeparadas[i] === ""){
-            //         idSeparadas.splice(i,0)
-            //     }
-            // }
-            idSeparadas = idSeparadas.filter((item) => item !== '')
+        for (let i = 0; i < cantDeSep; i++) {
+            idSeparadas[i] = idGigante.substring(inicio, fin)
+            inicio = fin
+            fin += 28
+        }
 
 
-            idSeparadas.push(currentUser.uid)
+        // for(let i = 0; i<idSeparadas.length; i++){
+        //     if(idSeparadas[i] === ""){
+        //         idSeparadas.splice(i,0)
+        //     }
+        // }
+        idSeparadas = idSeparadas.filter((item) => item !== '')
 
-            idSeparadas.sort().reverse()
 
-            console.log("Id separadas:\n")
-            console.log(idSeparadas)
+        //Sin usuario actual
+        var idDelChatSinUA = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            idDelChatSinUA = idDelChatSinUA + idSeparadas[i]
+        }
 
-            var indiceDeBusqueda = ""
-            for(let i = 0; i<idSeparadas.length; i++){
-                indiceDeBusqueda = indiceDeBusqueda + idSeparadas[i]
-            }
+
+        idSeparadas.push(currentUser.uid)
+
+        idSeparadas.sort().reverse()
+
+        console.log("Id separadas:\n")
+        console.log(idSeparadas)
+
+        var indiceDeBusqueda = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            indiceDeBusqueda = indiceDeBusqueda + idSeparadas[i]
+        }
 
         try {
+
+            const desci = Object.entries(chats)?.filter(chat => chat[1].userInfo.uid == idDelChatSinUA).map((chat) => (
+                chat[1].encriptado
+            ))
+            var estaEncriptado = desci + ""
+
+            // Encriptar text
+            var miTexto = text
+            var miTextoEncriptado = ""
+            if (estaEncriptado == "Encriptado") {
+                for (let i = 0; i < miTexto.length; i++) {
+                    let asciiDelCaracter = 0
+                    asciiDelCaracter = miTexto[i].charCodeAt(0);
+                    asciiDelCaracter++
+
+                    let miLetraSiguiente = String.fromCharCode(asciiDelCaracter);
+
+                    miTextoEncriptado += miLetraSiguiente
+                }
+                console.warn("Mensaje encriptado enviado")
+                console.warn(miTextoEncriptado)
+            } else {
+                miTextoEncriptado = miTexto
+                console.warn("Mensaje descifrado enviado ")
+                console.warn(miTextoEncriptado)
+            }
+
+
+
+
+
+
             if (img) {
 
                 const storageRef = ref(storage, uuid());
@@ -129,10 +168,11 @@ const Input = () => {
                             await updateDoc(doc(db, "chats", indiceDeBusqueda), {
                                 messages: arrayUnion({
                                     id: uuid(),
-                                    text,
+                                    miTextoEncriptado,
                                     senderId: currentUser.uid,
                                     date: Timestamp.now(),
                                     img: downloadURL,
+                                    encriptado: estaEncriptado,
                                 }),
 
                             });
@@ -151,9 +191,10 @@ const Input = () => {
                 await updateDoc(doc(db, "chats", indiceDeBusqueda), {
                     messages: arrayUnion({
                         id: uuid(),
-                        text,
+                        miTextoEncriptado,
                         senderId: currentUser.uid,
                         date: Timestamp.now(),
+                        encriptado: estaEncriptado,
                     }),
 
                 });
@@ -163,26 +204,17 @@ const Input = () => {
         }
 
         try {
-            
 
-            //console.log(idSeparadas)
 
-            //TODO
 
-            // await updateDoc(doc(db, "userChats", currentUser.uid), {
-            //     [data.chatId + ".lastMessage"]: {
-            //         text,
-            //         senderId: currentUser.uid,
-            //     },
-            //     [data.chatId + ".date"]: serverTimestamp(),
-            // });
 
 
             if (idSeparadas.length <= 2) {
                 for (let i = 0; i < idSeparadas.length; i++) {
                     await updateDoc(doc(db, "userChats", idSeparadas[i]), {
                         [data.chatId + ".lastMessage"]: {
-                            text,
+                            miTextoEncriptado,
+                            encriptado: estaEncriptado,
                             senderId: currentUser.uid,
                         },
                         [data.chatId + ".date"]: serverTimestamp(),
@@ -190,38 +222,18 @@ const Input = () => {
                 }
             } else {
                 data.chatId = indiceDeBusqueda
-                // Swal.fire({
-                //     icon: 'warning',
-                //     title: 'Más de 2 id',
-                //     confirmButtonText: 'De acuerdo'
-                // })
+
                 for (let i = 0; i < idSeparadas.length; i++) {
                     await updateDoc(doc(db, "userChats", idSeparadas[i]), {
                         [indiceDeBusqueda + ".lastMessage"]: {
-                            text,
+                            miTextoEncriptado,
+                            encriptado: estaEncriptado,
                             senderId: currentUser.uid,
                         },
                         [indiceDeBusqueda + ".date"]: serverTimestamp(),
                     });
                 }
             }
-
-            // await updateDoc(doc(db, "userChats", currentUser.uid), {
-            //     [data.chatId + ".lastMessage"]: {
-            //         text,
-            //         senderId: currentUser.uid,
-            //     },
-            //     [data.chatId + ".date"]: serverTimestamp(),
-            // });
-
-            // await updateDoc(doc(db, "userChats", data.user.uid), {
-            //     [data.chatId + ".lastMessage"]: {
-            //         text,
-            //         senderId: currentUser.uid,
-            //     },
-            //     [data.chatId + ".date"]: serverTimestamp(),
-            // });
-
 
         } catch (err) {
             console.log("Usuario destino: " + err)
