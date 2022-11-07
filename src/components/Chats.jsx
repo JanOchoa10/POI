@@ -66,7 +66,18 @@ const Chats = () => {
     }, [currentUser.uid]);
 
 
+    const tamChat = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).filter(chat => chat[1].tipoDeChat == "Chat").map((chat) => (
+        chat[1].length
+    ))
 
+    const tamGrupo = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).filter(chat => chat[1].tipoDeChat == "Grupo").map((chat) => (
+        chat[1].length
+    ))
+
+    // console.log("Tamaño de mis chats")
+    // console.log(chats.length)
+    // console.log("Tamaño de mi tam")
+    // console.log(tamChat.length)
 
     // const chatsDelUsuarioActual = Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
     //     chat[1].userInfo.uid
@@ -108,7 +119,7 @@ const Chats = () => {
         // console.log(u)
 
 
-        
+
         // var idSeparadas = []
         // const misIDs = u.uid
         // //En vez de separar por comas, separar por cantidad de carácteres
@@ -179,8 +190,8 @@ const Chats = () => {
 
             <div className="tab-container">
                 <ul className="options">
-                    <li id="option1" className="option option-active" onClick={() => changeOption(1)}>Chats</li>
-                    <li id="option2" className="option" onClick={() => changeOption(2)}>Grupos</li>
+                    <li id="option1" className="option option-active" onClick={() => changeOption(1)}>Chats ({tamChat.length})</li>
+                    <li id="option2" className="option" onClick={() => changeOption(2)}>Grupos ({tamGrupo.length})</li>
                 </ul>
             </div>
 
