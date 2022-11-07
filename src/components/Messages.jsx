@@ -18,6 +18,8 @@ const Messages = () => {
             unSub()
         }
     }, [data.chatId])
+    // console.log("Mi data.chatId es:")
+    // console.log(data.chatId)
 
     function InsertarIconos(data) {
         if (data.user?.displayName !== undefined) {

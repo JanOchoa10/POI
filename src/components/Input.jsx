@@ -189,11 +189,12 @@ const Input = () => {
                     });
                 }
             } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Más de 2 id',
-                    confirmButtonText: 'De acuerdo'
-                })
+                data.chatId = indiceDeBusqueda
+                // Swal.fire({
+                //     icon: 'warning',
+                //     title: 'Más de 2 id',
+                //     confirmButtonText: 'De acuerdo'
+                // })
                 for (let i = 0; i < idSeparadas.length; i++) {
                     await updateDoc(doc(db, "userChats", idSeparadas[i]), {
                         [indiceDeBusqueda + ".lastMessage"]: {

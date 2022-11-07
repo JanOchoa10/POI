@@ -312,7 +312,8 @@ const Navbar = () => {
                         displayName: groupname,
                         photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                     },
-                    [combineId + ".date"]: serverTimestamp()
+                    [combineId + ".date"]: serverTimestamp(),
+                    [combineId + ".tipoDeChat"]: "Grupo"
                 });
                 // }
 
@@ -327,27 +328,29 @@ const Navbar = () => {
                                 displayName: groupname,
                                 photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                             },
-                            [combineId + ".date"]: serverTimestamp()
+                            [combineId + ".date"]: serverTimestamp(),
+                            [combineId + ".tipoDeChat"]: "Grupo"
                         });
                     }
                 } else {
                     for (let i = 0; i < sep.length; i++) {
 
                         var nuevoId = ""
-                        for (let k = 0; k < listaDeInte.length; k++) {
-                            if (listaDeInte[k] != listaDeInte[i]) {
-                                nuevoId = nuevoId + listaDeInte[k]
+                        for (let k = 0; k < sep.length; k++) {
+                            if (sep[k] != sep[i]) {
+                                nuevoId = nuevoId + sep[k]
                             }
                         }
 
 
                         await updateDoc(doc(db, "userChats", sep[i]), {
                             [combineId + ".userInfo"]: {
-                                uid: nuevoId,
+                                uid: nuevoId + currentUser.uid,
                                 displayName: groupname,
                                 photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                             },
-                            [combineId + ".date"]: serverTimestamp()
+                            [combineId + ".date"]: serverTimestamp(),
+                            [combineId + ".tipoDeChat"]: "Grupo"
                         });
                     }
                 }

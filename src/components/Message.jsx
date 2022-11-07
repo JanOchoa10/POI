@@ -120,10 +120,10 @@ const Message = ({ message }) => {
     //TODO PARA MOSTRAR IMÁGENES
     if (misUsuarios.length <= 0) {
        myCambio() //Descomentar para las imágenes de los chats
-        console.log("Usuarios guardados")
+        //console.log("Usuarios guardados")
     } else {
-        console.log("Usuarios pre-consultados")
-        console.log(misUsuarios.length)
+        // console.log("Usuarios pre-consultados")
+        // console.log(misUsuarios.length)
     }
 
     //console.log(misUsuarios)

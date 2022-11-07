@@ -141,7 +141,8 @@ const Search = () => {
                         displayName: u.displayName,
                         photoURL: u.photoURL,
                     },
-                    [combineId + ".date"]: serverTimestamp()
+                    [combineId + ".date"]: serverTimestamp(),
+                    [combineId + ".tipoDeChat"]: "Chat"
                 });
 
                 await updateDoc(doc(db, "userChats", u.uid), {
@@ -150,7 +151,8 @@ const Search = () => {
                         displayName: currentUser.displayName,
                         photoURL: currentUser.photoURL,
                     },
-                    [combineId + ".date"]: serverTimestamp()
+                    [combineId + ".date"]: serverTimestamp(),
+                    [combineId + ".tipoDeChat"]: "Chat"
                 });
 
             } else {
