@@ -46,50 +46,7 @@ const Message = ({ message }) => {
         chat[1].userInfo.uid
     ))
 
-    //TODO probar para cargar los usuarios
-
-    // Número 1 para probar
-    // useEffect(() => {
-    //     const getUsers = () => {
-    //         const unsub = onSnapshot(doc(db, "users"), (doc) => {
-    //             setUUsuarios(doc.data())
-    //         });
-
-    //         return () => {
-    //             unsub();
-    //         };
-    //     };
-    //     getUsers()
-    // }, []);
-
-    // const UsUsuarios = Object.entries(UUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
-    //     chat[1].userInfo.uid
-    // ))
-
-    // Número 2 para probar
-    // useEffect(() => {
-    //     const myCambio = async () => {
-
-    //         const rooms = []
-    //         const qVacio = query(
-    //             collection(db, "users"),
-    //             //where("displayName", "==", username)
-    //             orderBy('displayName'), startAt(""), endAt("" + '\uf8ff')
-    //         );
-
-    //         const querySnapshot = await getDocs(qVacio);
-    //         querySnapshot.forEach((doc) => {
-    //             // doc.data() is never undefined for query doc snapshots
-    //             rooms.push(doc.data())
-    //         });
-    //         setUUsuarios(rooms)
-    //     }
-    //     myCambio()
-    // }, []);
-
-    // const UsUsuarios = Object.entries(UUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
-    //     chat[1].userInfo.uid
-    // ))
+    
 
     //Número 3 para probar
     const rooms = []
@@ -117,31 +74,61 @@ const Message = ({ message }) => {
 
         setMisUsuarios(rooms)
     }
+
+
+
+
+    var idSeparadas2 = []
+    idSeparadas2 = misIDs.split(',')
+
+    var idGigante = idSeparadas2[0]
+    var cantCaracteres = idGigante.length
+    var cantDeSep = cantCaracteres/28
+    var recorridos = 0
+
+    var inicio = 0, fin = 28
+
+    for(let i = 0; i<cantDeSep; i++){
+        idSeparadas2[i] = idGigante.substring(inicio, fin)
+        inicio = fin
+        fin += 28
+    }
+
+    
+    // for(let i = 0; i<idSeparadas2.length; i++){
+    //     if(idSeparadas2[i] === ""){
+    //         idSeparadas2.splice(i,0)
+    //     }
+    // }
+    idSeparadas2 = idSeparadas2.filter((item) => item !== '')
+
+
+    idSeparadas2.push(currentUser.uid)
+
+    idSeparadas2.sort().reverse()
+
+    console.log("Id separadas:\n")
+    console.log(idSeparadas2)
+
+    var indiceDeBusqueda = ""
+    for(let i = 0; i<idSeparadas2.length; i++){
+        indiceDeBusqueda = indiceDeBusqueda + idSeparadas2[i]
+    }
+    console.log("Mi indice de busqueda:")
+    console.log(indiceDeBusqueda)
+
+
+    data.chatId = indiceDeBusqueda
+
     //TODO PARA MOSTRAR IMÁGENES
     if (misUsuarios.length <= 0) {
        myCambio() //Descomentar para las imágenes de los chats
         //console.log("Usuarios guardados")
+        
     } else {
         // console.log("Usuarios pre-consultados")
         // console.log(misUsuarios.length)
     }
-
-    //console.log(misUsuarios)
-    //myCambio()
-
-    // useEffect(() => {
-    //     const getChats = () => {
-    //         const unsub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
-    //             setMisUsuarios(doc.data())
-    //         });
-
-    //         return () => {
-    //             unsub();
-    //         };
-    //     };
-    //     currentUser.uid && getChats()
-    // }, [currentUser.uid]);
-    //myCambio()
 
     const fotosDeChatDelUsuarioActual = Object.entries(misUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
         //chat[1].userInfo.photoURL
