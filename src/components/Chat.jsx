@@ -347,7 +347,7 @@ const Chat = () => {
         const miDoc = document.getElementById('myCHECK');
 
         if (desci == "Descrifrado") {
-
+            miDoc.removeAttribute('checked');
         } else {
 
             miDoc.setAttribute('checked', '');
@@ -364,7 +364,7 @@ const Chat = () => {
         if (data.user?.displayName !== undefined) {
             return (
                 <div className="chatInfo">
-                    <img className="img2" src={data.user?.photoURL} alt="" />
+                    <img className="img2" src={data.user?.photoURL} alt=""/>
                     <span>{data.user?.displayName}</span>
 
                     <div className="chatIcons">
