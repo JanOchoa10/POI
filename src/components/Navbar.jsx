@@ -18,6 +18,7 @@ const Navbar = () => {
     const { dispatch } = useContext(ChatContext);
     const { currentUser } = useContext(AuthContext);
     const [username, setUsername] = useState("");
+    const [groupname, setGroupname] = useState("");
     const [user, setUser] = useState(null);
     const [err, setErr] = useState(false);
     const [myChats, setMyChats] = useState([]);
@@ -51,11 +52,19 @@ const Navbar = () => {
             miDoc.removeAttribute('hidden');
         }
         // Limpiamos los usuarios filtrados en rooms
-        rooms.length += rooms.length
+        rooms.length -= rooms.length
         setMyChats(rooms)
 
         // Y limpiamos los usuarios agregados en listaDeInte
         listaDeInte.length -= listaDeInte.length
+
+        const nombreDelGrupo = document.getElementById('nombreDelGrupo');
+        const inputBuscador = document.getElementById('inputBuscador');
+
+        nombreDelGrupo.value = "";
+        inputBuscador.value = "";
+
+
     }
 
     const handleSearch = async () => {
@@ -150,7 +159,7 @@ const Navbar = () => {
     }
 
     const handleSelect = async (u) => {
-        
+
         if (listaDeInte.length > 0) {
 
 
@@ -181,9 +190,9 @@ const Navbar = () => {
                         }).then((result) => {
                             /* Read more about isConfirmed, isDenied below */
                             if (result.isConfirmed) {
-                                
+
                                 listaDeInte.splice(i, 1)
-                                
+
                             }
                         })
                         siExisteYa = true
@@ -204,57 +213,179 @@ const Navbar = () => {
                     title: '¡Ya agregado al grupo!',
                     text: 'El usuario actual ya se encuentra dentro del grupo.',
                     confirmButtonText: 'Aceptar'
-                    
+
                 })
             } else {
                 const queso = listaDeInte.push(u.uid);
             }
         }
 
-        
+
 
     }
 
     const crearGrupo = async (u) => {
+
+        u = ""
+        for (let i = 0; i < listaDeInte.length; i++) {
+            u = u + listaDeInte[i] + ","
+        }
+        var sep = u.split(',')
+        sep = sep.sort().reverse()
+
+        sep = sep.filter((item) => item !== '')
+
+        var uSinComas = ""
+        for (let i = 0; i < listaDeInte.length; i++) {
+            uSinComas = uSinComas + listaDeInte[i]
+        }
+
+        listaDeInte.push(currentUser.uid)
+
+
+        const listaParaOrdenar = listaDeInte.sort().reverse()
+
+        var comb = ""
+        for (let i = 0; i < listaDeInte.length; i++) {
+            comb = comb + listaDeInte[i]
+        }
+
+        //console.log(sep[0])
+        // console.log("Usuario actual:")
+        // console.log(currentUser.uid)
+        // console.log("Usuario u:")
+        // console.log(u)
+        const combineId = comb
+        // currentUser.uid > uSinComas
+        //     ? currentUser.uid + uSinComas
+        //     : uSinComas + currentUser.uid;
+
+        // console.log("Id combinada:")
+        // console.log(combineId)
+
+
+        // console.log(sep)
         try {
-            
-            
+
+
 
             //Se agrega usuario que crea el grupo
-            listaDeInte.push(currentUser.uid);
-            const listaOrdenada = listaDeInte.sort()
+            // listaDeInte.push(currentUser.uid);
+            // const listaOrdenada = listaDeInte.sort()
 
-            //Imprimimos los usuarios seleccionados
-            grupoId = ""
-            for (let i = 0; i < listaOrdenada.length; i++) {
-                grupoId = grupoId + listaOrdenada[i] +","
-            }
+            // const listaOrdenada = listaDeInte.sort().reverse()
+
+            // //Imprimimos los usuarios seleccionados
+            // grupoId = ""
+            // for (let i = 0; i < listaOrdenada.length; i++) {
+            //     grupoId = grupoId + listaOrdenada[i] + ","
+            // }
 
             // listaIDS = ""
             // for (let i = 0; i < listaOrdenada.length; i++) {
             //     listaIDS = listaIDS + listaOrdenada[i] +","
             // }
 
+            // const combineId =
+            //     currentUser.uid > grupoId
+            //         ? currentUser.uid + grupoId
+            //         : grupoId + currentUser.uid;
 
-            const combineId = grupoId
-
+            // const combineId =
+            //     currentUser.uid > u.uid
+            //         ? currentUser.uid + u.uid
+            //         : u.uid + currentUser.uid;
+            console.log("MI sep:")
+            console.log(sep)
+            console.log("Mi lista de inte:")
+            console.log(listaDeInte)
             const res = await getDoc(doc(db, "chats", combineId));
 
             if (!res.exists()) {
                 //crear un chat en la coleccion de grupos
                 await setDoc(doc(db, "chats", combineId), { messages: [] });
-                //Asignamos el grupo creado a cada usuario
-                for (let i = 0; i< listaOrdenada.length; i++){
 
-                    await updateDoc(doc(db, "userChats", listaOrdenada[i]), {
-                        [combineId + ".userInfo"]: {
-                            uid: combineId,
-                            displayName: 'Grupo 1',
-                            photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
-                        },
-                        [combineId + ".date"]: serverTimestamp()
-                    });
+                // for (let i = 0; i < sep.length-1; i++) {
+                await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    [combineId + ".userInfo"]: {
+                        uid: uSinComas,
+                        displayName: groupname,
+                        photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                    },
+                    [combineId + ".date"]: serverTimestamp(),
+                    [combineId + ".tipoDeChat"]: "Grupo"
+                });
+                // }
+
+                //cada usuario
+
+                // for(let i = 0; i<sep.length; i++){
+                if (sep.length <= 1) {
+                    for (let i = 0; i < sep.length; i++) {
+                        await updateDoc(doc(db, "userChats", sep[i]), {
+                            [combineId + ".userInfo"]: {
+                                uid: currentUser.uid,
+                                displayName: groupname,
+                                photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                            },
+                            [combineId + ".date"]: serverTimestamp(),
+                            [combineId + ".tipoDeChat"]: "Grupo"
+                        });
+                    }
+                } else {
+                    for (let i = 0; i < sep.length; i++) {
+
+                        var nuevoId = ""
+                        for (let k = 0; k < sep.length; k++) {
+                            if (sep[k] != sep[i]) {
+                                nuevoId = nuevoId + sep[k]
+                            }
+                        }
+
+
+                        await updateDoc(doc(db, "userChats", sep[i]), {
+                            [combineId + ".userInfo"]: {
+                                uid: nuevoId + currentUser.uid,
+                                displayName: groupname,
+                                photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                            },
+                            [combineId + ".date"]: serverTimestamp(),
+                            [combineId + ".tipoDeChat"]: "Grupo"
+                        });
+                    }
                 }
+                // }
+
+                // await updateDoc(doc(db, "userChats", currentUser.uid), {
+                //     [combineId + ".userInfo"]: {
+                //         uid: u.uid,
+                //         displayName: u.displayName,
+                //         photoURL: u.photoURL,
+                //     },
+                //     [combineId + ".date"]: serverTimestamp()
+                // });
+
+                // //Asignamos el grupo creado a cada usuario
+                // for (let i = 0; i < listaOrdenada.length; i++) {
+
+                //     //Variable del grupo
+                //     var grupoExtra = ""
+                //     for (let j = 0; j < listaOrdenada.length; j++) {
+
+                //         if (listaOrdenada[i] != listaOrdenada[j]) {
+                //             grupoExtra = grupoExtra + listaOrdenada[j] + ","
+                //         }
+                //     }
+
+                //     await updateDoc(doc(db, "userChats", listaOrdenada[i]), {
+                //         [combineId + ".userInfo"]: {
+                //             uid: grupoExtra,
+                //             displayName: groupname,
+                //             photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                //         },
+                //         [combineId + ".date"]: serverTimestamp()
+                //     });
+                // }
 
             } else {
 
@@ -264,7 +395,7 @@ const Navbar = () => {
                     text: 'Revise sus chats para conversar con ese usuario.',
                     confirmButtonText: 'Aceptar',
                 })
-                
+
             }
 
 
@@ -305,14 +436,31 @@ const Navbar = () => {
 
                         <div className="crear">
                             <form className="crear" onSubmit={handleSubmit}>
-                                <input type="text" className="grupo-active"
-                                    placeholder="Buscar integrantes"
-                                    onKeyDown={handleKey}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    onBlur={focusOut} />
 
-                                <input type="button" className="myBtn" value="Crear grupo"
-                                    onClick={crearGrupo} />
+                                <div className="secciones">
+                                    <input type="text" className="grupo-active"
+                                        placeholder="Nombra al grupo"
+                                        onKeyDown={handleKey}
+                                        onChange={(e) => setGroupname(e.target.value)}
+                                        onBlur={focusOut}
+                                        id="nombreDelGrupo" />
+                                </div>
+
+                                <div className="secciones">
+                                    <input type="text" className="grupo-active"
+                                        placeholder="Buscar integrantes"
+                                        onKeyDown={handleKey}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        onBlur={focusOut}
+                                        id="inputBuscador" />
+
+                                    <input type="button" className="myBtn" value="Crear grupo"
+                                        onClick={crearGrupo} />
+
+                                </div>
+
+
+
                             </form>
 
                         </div>

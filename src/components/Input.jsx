@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import { arrayUnion, doc, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
@@ -13,6 +13,8 @@ import emoji from 'emoji-library';
 import { EmojiService, emoji_list } from "emoji-library";
 import "emoji-selector";
 import { isDocument } from "@testing-library/user-event/dist/utils";
+import { onSnapshot } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 
 const Input = () => {
@@ -27,25 +29,104 @@ const Input = () => {
 
     const { currentUser } = useContext(AuthContext)
     const { data } = useContext(ChatContext)
+    const [chats, setChats] = useState([]);
+
+
+    useEffect(() => {
+        const getChats = () => {
+            const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+                setChats(doc.data())
+            });
+
+            return () => {
+                unsub();
+            };
+        };
+        currentUser.uid && getChats()
+    }, [currentUser.uid]);
+
+    const idsDeChats = Object.entries(chats)?.map((chat) => (
+        chat[1].userInfo.uid
+    ))
+
+
 
     var idSeparadas = []
-
+    const misIDs = data.user.uid
     const handleSend = async () => {
+        // console.log('Mi cadena de iDS: \n')
+        //console.log(misIDs)
+        //console.log("Mis ids: \n")
+
+        //console.log(idsDeChats)
+
+        //const reverso = idsDeChats.reverse()
+        //console.log(reverso[0])
+
+
+        const ultimo = idsDeChats[idsDeChats.length - 1]
+
+        console.log("My ultimo id")
+        console.log(ultimo)
+        console.log("DAta chat id: \n")
+        console.log(data.chatId)
+
+        // Separamos las ids para agregarles los datos a
+
+            //TODO
+            //En vez de separar por comas, separar por cantidad de carácteres
+            idSeparadas = misIDs.split(',')
+
+            var idGigante = idSeparadas[0]
+            var cantCaracteres = idGigante.length
+            var cantDeSep = cantCaracteres/28
+            var recorridos = 0
+
+            var inicio = 0, fin = 28
+
+            for(let i = 0; i<cantDeSep; i++){
+                idSeparadas[i] = idGigante.substring(inicio, fin)
+                inicio = fin
+                fin += 28
+            }
+
+            
+            // for(let i = 0; i<idSeparadas.length; i++){
+            //     if(idSeparadas[i] === ""){
+            //         idSeparadas.splice(i,0)
+            //     }
+            // }
+            idSeparadas = idSeparadas.filter((item) => item !== '')
+
+
+            idSeparadas.push(currentUser.uid)
+
+            idSeparadas.sort().reverse()
+
+            console.log("Id separadas:\n")
+            console.log(idSeparadas)
+
+            var indiceDeBusqueda = ""
+            for(let i = 0; i<idSeparadas.length; i++){
+                indiceDeBusqueda = indiceDeBusqueda + idSeparadas[i]
+            }
 
         try {
             if (img) {
-                const storageRef = ref(storage, uuid());
 
+                const storageRef = ref(storage, uuid());
                 const uploadTask = uploadBytesResumable(storageRef, img);
 
+                // try {
                 uploadTask.on(
                     (error) => {
-                        console.log("Mi error: " + error)
+                        console.log("Mi error: \n" + error)
                     },
                     () => {
+
                         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
                             //getDownloadURL(storageRef).then(async (downloadURL) => {
-                            await updateDoc(doc(db, "chats", data.chatId), {
+                            await updateDoc(doc(db, "chats", indiceDeBusqueda), {
                                 messages: arrayUnion({
                                     id: uuid(),
                                     text,
@@ -57,11 +138,17 @@ const Input = () => {
                             });
 
                         });
+
+
+
                     }
                 );
+                // } catch (error) {
+                //     console.log("Error aquí: " + error)
+                // }
 
             } else {
-                await updateDoc(doc(db, "chats", data.chatId), {
+                await updateDoc(doc(db, "chats", indiceDeBusqueda), {
                     messages: arrayUnion({
                         id: uuid(),
                         text,
@@ -72,23 +159,70 @@ const Input = () => {
                 });
             }
         } catch (err) {
-            console.log("Imagen: " + err)
+            console.log("Imagen: \n" + err)
         }
-        
+
         try {
-            // Separamos las ids para agregarles los datos a
-            const misIDs = data.user.uid
-            idSeparadas = misIDs.split(',')
-            idSeparadas.pop()
-            for (let i = 0; i < idSeparadas.length; i++) {
-                await updateDoc(doc(db, "userChats", idSeparadas[i]), {
-                    [misIDs + ".lastMessage"]: {
-                        text,
-                        senderId: currentUser.uid,
-                    },
-                    [misIDs + ".date"]: serverTimestamp(),
-                });
+            
+
+            //console.log(idSeparadas)
+
+            //TODO
+
+            // await updateDoc(doc(db, "userChats", currentUser.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
+
+
+            if (idSeparadas.length <= 2) {
+                for (let i = 0; i < idSeparadas.length; i++) {
+                    await updateDoc(doc(db, "userChats", idSeparadas[i]), {
+                        [data.chatId + ".lastMessage"]: {
+                            text,
+                            senderId: currentUser.uid,
+                        },
+                        [data.chatId + ".date"]: serverTimestamp(),
+                    });
+                }
+            } else {
+                data.chatId = indiceDeBusqueda
+                // Swal.fire({
+                //     icon: 'warning',
+                //     title: 'Más de 2 id',
+                //     confirmButtonText: 'De acuerdo'
+                // })
+                for (let i = 0; i < idSeparadas.length; i++) {
+                    await updateDoc(doc(db, "userChats", idSeparadas[i]), {
+                        [indiceDeBusqueda + ".lastMessage"]: {
+                            text,
+                            senderId: currentUser.uid,
+                        },
+                        [indiceDeBusqueda + ".date"]: serverTimestamp(),
+                    });
+                }
             }
+
+            // await updateDoc(doc(db, "userChats", currentUser.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
+
+            // await updateDoc(doc(db, "userChats", data.user.uid), {
+            //     [data.chatId + ".lastMessage"]: {
+            //         text,
+            //         senderId: currentUser.uid,
+            //     },
+            //     [data.chatId + ".date"]: serverTimestamp(),
+            // });
+
+
         } catch (err) {
             console.log("Usuario destino: " + err)
         }
