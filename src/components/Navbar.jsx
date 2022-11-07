@@ -239,15 +239,26 @@ const Navbar = () => {
         for (let i = 0; i < listaDeInte.length; i++) {
             uSinComas = uSinComas + listaDeInte[i]
         }
+
+        listaDeInte.push(currentUser.uid)
+
+
+        const listaParaOrdenar = listaDeInte.sort().reverse()
+
+        var comb = ""
+        for (let i = 0; i < listaDeInte.length; i++) {
+            comb = comb + listaDeInte[i]
+        }
+
         //console.log(sep[0])
         // console.log("Usuario actual:")
         // console.log(currentUser.uid)
         // console.log("Usuario u:")
         // console.log(u)
-        const combineId =
-            currentUser.uid > uSinComas
-                ? currentUser.uid + uSinComas
-                : uSinComas + currentUser.uid;
+        const combineId = comb
+        // currentUser.uid > uSinComas
+        //     ? currentUser.uid + uSinComas
+        //     : uSinComas + currentUser.uid;
 
         // console.log("Id combinada:")
         // console.log(combineId)
@@ -284,7 +295,10 @@ const Navbar = () => {
             //     currentUser.uid > u.uid
             //         ? currentUser.uid + u.uid
             //         : u.uid + currentUser.uid;
-
+            console.log("MI sep:")
+            console.log(sep)
+            console.log("Mi lista de inte:")
+            console.log(listaDeInte)
             const res = await getDoc(doc(db, "chats", combineId));
 
             if (!res.exists()) {
@@ -310,6 +324,26 @@ const Navbar = () => {
                         await updateDoc(doc(db, "userChats", sep[i]), {
                             [combineId + ".userInfo"]: {
                                 uid: currentUser.uid,
+                                displayName: groupname,
+                                photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                            },
+                            [combineId + ".date"]: serverTimestamp()
+                        });
+                    }
+                } else {
+                    for (let i = 0; i < sep.length; i++) {
+
+                        var nuevoId = ""
+                        for (let k = 0; k < listaDeInte.length; k++) {
+                            if (listaDeInte[k] != listaDeInte[i]) {
+                                nuevoId = nuevoId + listaDeInte[k]
+                            }
+                        }
+
+
+                        await updateDoc(doc(db, "userChats", sep[i]), {
+                            [combineId + ".userInfo"]: {
+                                uid: nuevoId,
                                 displayName: groupname,
                                 photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
                             },

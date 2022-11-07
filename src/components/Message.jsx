@@ -27,6 +27,7 @@ const Message = ({ message }) => {
 
     const [chats, setChats] = useState([]);
     const [misUsuarios, setMisUsuarios] = useState([]);
+    const [UUsuarios, setUUsuarios] = useState([]);
 
     useEffect(() => {
         const getChats = () => {
@@ -45,6 +46,52 @@ const Message = ({ message }) => {
         chat[1].userInfo.uid
     ))
 
+    //TODO probar para cargar los usuarios
+
+    // Número 1 para probar
+    // useEffect(() => {
+    //     const getUsers = () => {
+    //         const unsub = onSnapshot(doc(db, "users"), (doc) => {
+    //             setUUsuarios(doc.data())
+    //         });
+
+    //         return () => {
+    //             unsub();
+    //         };
+    //     };
+    //     getUsers()
+    // }, []);
+
+    // const UsUsuarios = Object.entries(UUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+    //     chat[1].userInfo.uid
+    // ))
+
+    // Número 2 para probar
+    // useEffect(() => {
+    //     const myCambio = async () => {
+
+    //         const rooms = []
+    //         const qVacio = query(
+    //             collection(db, "users"),
+    //             //where("displayName", "==", username)
+    //             orderBy('displayName'), startAt(""), endAt("" + '\uf8ff')
+    //         );
+
+    //         const querySnapshot = await getDocs(qVacio);
+    //         querySnapshot.forEach((doc) => {
+    //             // doc.data() is never undefined for query doc snapshots
+    //             rooms.push(doc.data())
+    //         });
+    //         setUUsuarios(rooms)
+    //     }
+    //     myCambio()
+    // }, []);
+
+    // const UsUsuarios = Object.entries(UUsuarios)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
+    //     chat[1].userInfo.uid
+    // ))
+
+    //Número 3 para probar
     const rooms = []
     const qVacio = query(
         collection(db, "users"),
@@ -58,13 +105,24 @@ const Message = ({ message }) => {
             // doc.data() is never undefined for query doc snapshots
             rooms.push(doc.data())
         });
+
+        //Mejorado
+        // rooms = querySnapshot.map((doc) => {
+        //     // doc.data() is never undefined for query doc snapshots
+        //     return{
+        //         doc,
+        //     }
+            
+        // });
+
         setMisUsuarios(rooms)
     }
-
-    if(misUsuarios.length <= 0){
-        //myCambio() //Descomentar para las imágenes de los chats
+    //TODO PARA MOSTRAR IMÁGENES
+    if (misUsuarios.length <= 0) {
+       myCambio() //Descomentar para las imágenes de los chats
         console.log("Usuarios guardados")
     } else {
+        console.log("Usuarios pre-consultados")
         console.log(misUsuarios.length)
     }
 
@@ -118,17 +176,17 @@ const Message = ({ message }) => {
     } else {
         //imagenURL =  data.user.photoURL
         // for (let i = 0; i < chatsDelUsuarioActual.length; i++) {
-            // if (message.senderId == chatsDelUsuarioActual[i]) {
-                //imagenURL = fotosDeChatDelUsuarioActual[i]
+        // if (message.senderId == chatsDelUsuarioActual[i]) {
+        //imagenURL = fotosDeChatDelUsuarioActual[i]
 
-                for(let k= 0; k<fotosDeChatDelUsuarioActual.length; k++){
-                    if(fotosDeChatDelUsuarioActual[k][1].uid == message.senderId){
-                        imagenURL = fotosDeChatDelUsuarioActual[k][1].photoURL
-                    }
-                }
+        for (let k = 0; k < fotosDeChatDelUsuarioActual.length; k++) {
+            if (fotosDeChatDelUsuarioActual[k][1].uid == message.senderId) {
+                imagenURL = fotosDeChatDelUsuarioActual[k][1].photoURL
+            }
+        }
 
-                // break;
-            // }
+        // break;
+        // }
         // }
     }
 
