@@ -130,9 +130,9 @@ const Chat = () => {
                 ? currentUser.uid + data.chatId
                 : data.chatId + currentUser.uid;
 
-        console.log(data.chatId)
-        console.log(combineIdGroup)
-        console.log(user)
+        // console.log(data.chatId)
+        // console.log(combineIdGroup)
+        // console.log(user)
 
 
 
@@ -164,38 +164,224 @@ const Chat = () => {
     }
 
 
+    const myCheckbox = async () => {
+        console.log("Tocaste el checkbox")
+
+
+        var idSeparadas = []
+        const misIDs = data.user.uid
+        idSeparadas = misIDs.split(',')
+
+        var idGigante = idSeparadas[0]
+        var cantCaracteres = idGigante.length
+        var cantDeSep = cantCaracteres / 28
+        var recorridos = 0
+
+        var inicio = 0, fin = 28
+
+        for (let i = 0; i < cantDeSep; i++) {
+            idSeparadas[i] = idGigante.substring(inicio, fin)
+            inicio = fin
+            fin += 28
+        }
+
+
+        // for(let i = 0; i<idSeparadas.length; i++){
+        //     if(idSeparadas[i] === ""){
+        //         idSeparadas.splice(i,0)
+        //     }
+        // }
+        idSeparadas = idSeparadas.filter((item) => item !== '')
+
+        //Sin usuario actual
+        var idDelChatSinUA = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            idDelChatSinUA = idDelChatSinUA + idSeparadas[i]
+        }
+
+        idSeparadas.push(currentUser.uid)
+
+        idSeparadas.sort().reverse()
+
+        // console.log("Id separadas:\n")
+        // console.log(idSeparadas)
+
+        var indiceDeBusqueda = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            indiceDeBusqueda = indiceDeBusqueda + idSeparadas[i]
+        }
+
+        try {
+
+            const desci = Object.entries(chats)?.filter(chat => chat[1].userInfo.uid == idDelChatSinUA).map((chat) => (
+                chat[1].encriptado
+            ))
+
+            if (desci == "Descrifrado") {
+
+                await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    [indiceDeBusqueda + ".encriptado"]: "Encriptado",
+                });
+
+
+                let timerInterval
+                Swal.fire({
+
+                    title: '¡Mensajes encriptados!',
+                    icon: 'success',
+                    // text: 'Tus mensajes ahora serán cifrados de extremo a extremo',
+                    html: 'Tus mensajes ahora serán cifrados de extremo a extremo.<br>Autocierre en <b></b> segundos.',
+                    timer: 2100,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            let miEntero = parseInt(Swal.getTimerLeft())
+                            miEntero = miEntero.toPrecision(1)
+                            miEntero = miEntero / 1000;
+                            // miEntero++
+                            b.textContent = miEntero.toString();
+                        }, 200)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
+
+            } else {
+                await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    [indiceDeBusqueda + ".encriptado"]: "Descrifrado",
+                });
+
+                let timerInterval
+                Swal.fire({
+                    title: '¡Mensajes desencriptados!',
+                    icon: 'warning',
+                    // text: 'Tus mensajes ahora NO serán cifrados de extremo a extremo',
+                    html: 'Tus mensajes ahora <strong>NO</strong> serán cifrados de extremo a extremo.<br>Autocierre en <b></b> segundos.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            let miEntero = parseInt(Swal.getTimerLeft())
+                            miEntero = miEntero.toPrecision(1)
+                            miEntero = miEntero / 1000;
+                            // miEntero++
+                            b.textContent = miEntero.toString();
+                        }, 200)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
+            }
+
+        } catch (err) {
+            console.log("Error al cambiar estado de encriptado")
+            console.log(err)
+        }
+    }
+
+    const cargarSwitch = () => {
+
+        var idSeparadas = []
+        const misIDs = data.user.uid
+        idSeparadas = misIDs.split(',')
+
+        var idGigante = idSeparadas[0]
+        var cantCaracteres = idGigante.length
+        var cantDeSep = cantCaracteres / 28
+        var recorridos = 0
+
+        var inicio = 0, fin = 28
+
+        for (let i = 0; i < cantDeSep; i++) {
+            idSeparadas[i] = idGigante.substring(inicio, fin)
+            inicio = fin
+            fin += 28
+        }
+
+
+        // for(let i = 0; i<idSeparadas.length; i++){
+        //     if(idSeparadas[i] === ""){
+        //         idSeparadas.splice(i,0)
+        //     }
+        // }
+        idSeparadas = idSeparadas.filter((item) => item !== '')
+
+        //Sin usuario actual
+        var idDelChatSinUA = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            idDelChatSinUA = idDelChatSinUA + idSeparadas[i]
+        }
+
+        idSeparadas.push(currentUser.uid)
+
+        idSeparadas.sort().reverse()
+
+        // console.log("Id separadas:\n")
+        // console.log(idSeparadas)
+
+        var indiceDeBusqueda = ""
+        for (let i = 0; i < idSeparadas.length; i++) {
+            indiceDeBusqueda = indiceDeBusqueda + idSeparadas[i]
+        }
+
+        const desci = Object.entries(chats)?.filter(chat => chat[1].userInfo.uid == idDelChatSinUA).map((chat) => (
+            chat[1].encriptado
+        ))
+
+        const miDoc = document.getElementById('myCHECK');
+
+        if (desci == "Descrifrado") {
+            miDoc.removeAttribute('checked');
+        } else {
+
+            miDoc.setAttribute('checked', '');
+        }
+
+        // console.log("Sí carga mi precarga")
+
+
+    }
+
+
     function InsertarIconos(data) {
 
         if (data.user?.displayName !== undefined) {
             return (
                 <div className="chatInfo">
-                    <img className="img2" src={data.user?.photoURL} alt="" />
+                    <img className="img2" src={data.user?.photoURL} alt=""/>
                     <span>{data.user?.displayName}</span>
 
                     <div className="chatIcons">
                         <img src={Call} alt="" onClick={llamada} title="Empezar una llamada" />
                         <img src={Cam} alt="" onClick={videollamada} title="Empezar una videollamada" />
-                        {/* <img src={Add} alt="" onClick={agregar} title="Encriptar tus mensajes"/> */}
-
-                        {/* <!-- Rounded switch --> */}
-                        {/* <label className="switch">
-                            <input type="checkbox">
-                                <span className="slider round"></span>
-                            </input>
-                        </label> */}
-
 
                         <label className="switch" title="Encriptar tus mensajes">
-                            <input type="checkbox"></input>
+                            <input type="checkbox" onClick={myCheckbox} id="myCHECK"></input>
                             <div className="slider round"></div>
                         </label>
-
-
-
+                        <label className="escondido">{setTimeout(cargarSwitch, 0)}</label>
 
 
                     </div>
+
                 </div>
+
             );
         } else {
             return (
@@ -204,6 +390,8 @@ const Chat = () => {
                 </div>
             );
         }
+
+
 
 
     }
