@@ -903,9 +903,9 @@ input:checked+.slider:before {
     background-color: black;
     border-radius: 15px;
     width: 350px;
-    max-height: 300px;
+    max-height: 600px;
     padding: 20px;
-    transform: translate3d(18%, -10%, 0);
+    transform: translate3d(18%, -20px, 0);
     overflow-y: auto;
 
     .crear {

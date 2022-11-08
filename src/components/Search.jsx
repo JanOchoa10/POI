@@ -175,6 +175,8 @@ const Search = () => {
         //Verificar chats de usuarios
         setUser(null);
         dispatch({ type: "CHANGE_USER", payload: u });
+        // console.error("u: ")
+        // console.error(u)
 
 
         //setUsername("");

@@ -25,6 +25,7 @@ const Navbar = () => {
     const rooms = []
 
     const [listaDeInte, setLista] = useState([])
+    const [misSeleccionados, setSeleccionados] = useState([])
 
     var grupoId = ""
     // var listaIDS = ""
@@ -61,9 +62,13 @@ const Navbar = () => {
         const nombreDelGrupo = document.getElementById('nombreDelGrupo');
         const inputBuscador = document.getElementById('inputBuscador');
 
-        nombreDelGrupo.value = "";
         inputBuscador.value = "";
+        nombreDelGrupo.value = "";
 
+        misSeleccionados.length -= misSeleccionados.length
+
+
+        setUser("")
 
     }
 
@@ -160,6 +165,13 @@ const Navbar = () => {
 
     const handleSelect = async (u) => {
 
+        const inputBuscador = document.getElementById('inputBuscador');
+
+        //inputBuscador.value = "";
+
+        handleSearch();
+
+
         if (listaDeInte.length > 0) {
 
 
@@ -192,6 +204,7 @@ const Navbar = () => {
                             if (result.isConfirmed) {
 
                                 listaDeInte.splice(i, 1)
+                                misSeleccionados.splice(i, 1)
 
                             }
                         })
@@ -200,7 +213,8 @@ const Navbar = () => {
                     }
                 }
                 if (!siExisteYa) {
-                    const queso = listaDeInte.push(u.uid);
+                    listaDeInte.push(u.uid);
+                    misSeleccionados.push(u)
                 }
             }
 
@@ -216,7 +230,8 @@ const Navbar = () => {
 
                 })
             } else {
-                const queso = listaDeInte.push(u.uid);
+                listaDeInte.push(u.uid);
+                misSeleccionados.push(u)
             }
         }
 
@@ -250,51 +265,10 @@ const Navbar = () => {
             comb = comb + listaDeInte[i]
         }
 
-        //console.log(sep[0])
-        // console.log("Usuario actual:")
-        // console.log(currentUser.uid)
-        // console.log("Usuario u:")
-        // console.log(u)
         const combineId = comb
-        // currentUser.uid > uSinComas
-        //     ? currentUser.uid + uSinComas
-        //     : uSinComas + currentUser.uid;
 
-        // console.log("Id combinada:")
-        // console.log(combineId)
-
-
-        // console.log(sep)
         try {
 
-
-
-            //Se agrega usuario que crea el grupo
-            // listaDeInte.push(currentUser.uid);
-            // const listaOrdenada = listaDeInte.sort()
-
-            // const listaOrdenada = listaDeInte.sort().reverse()
-
-            // //Imprimimos los usuarios seleccionados
-            // grupoId = ""
-            // for (let i = 0; i < listaOrdenada.length; i++) {
-            //     grupoId = grupoId + listaOrdenada[i] + ","
-            // }
-
-            // listaIDS = ""
-            // for (let i = 0; i < listaOrdenada.length; i++) {
-            //     listaIDS = listaIDS + listaOrdenada[i] +","
-            // }
-
-            // const combineId =
-            //     currentUser.uid > grupoId
-            //         ? currentUser.uid + grupoId
-            //         : grupoId + currentUser.uid;
-
-            // const combineId =
-            //     currentUser.uid > u.uid
-            //         ? currentUser.uid + u.uid
-            //         : u.uid + currentUser.uid;
             console.log("MI sep:")
             console.log(sep)
             console.log("Mi lista de inte:")
@@ -357,45 +331,14 @@ const Navbar = () => {
                         });
                     }
                 }
-                // }
 
-                // await updateDoc(doc(db, "userChats", currentUser.uid), {
-                //     [combineId + ".userInfo"]: {
-                //         uid: u.uid,
-                //         displayName: u.displayName,
-                //         photoURL: u.photoURL,
-                //     },
-                //     [combineId + ".date"]: serverTimestamp()
-                // });
-
-                // //Asignamos el grupo creado a cada usuario
-                // for (let i = 0; i < listaOrdenada.length; i++) {
-
-                //     //Variable del grupo
-                //     var grupoExtra = ""
-                //     for (let j = 0; j < listaOrdenada.length; j++) {
-
-                //         if (listaOrdenada[i] != listaOrdenada[j]) {
-                //             grupoExtra = grupoExtra + listaOrdenada[j] + ","
-                //         }
-                //     }
-
-                //     await updateDoc(doc(db, "userChats", listaOrdenada[i]), {
-                //         [combineId + ".userInfo"]: {
-                //             uid: grupoExtra,
-                //             displayName: groupname,
-                //             photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
-                //         },
-                //         [combineId + ".date"]: serverTimestamp()
-                //     });
-                // }
 
             } else {
 
                 Swal.fire({
                     icon: 'error',
-                    title: '¡Ya existe un grupo con esos usuarios!',
-                    text: 'Revise sus chats para conversar con ese usuario.',
+                    title: '¡Ya existe un grupo tuyo con esos usuarios!',
+                    text: 'Revise sus chats para conversar con ese/esos usuario/s.',
                     confirmButtonText: 'Aceptar',
                 })
 
@@ -404,12 +347,14 @@ const Navbar = () => {
 
 
 
+
         } catch (err2) {
             console.error('Error, a mimir: ' + err2)
         }
         // setUser(null);
-        // dispatch({ type: "CHANGE_USER", payload: u });
-
+        // dispatch({ type: "CHANGE_USER", payload: uSinComas });
+        // console.log("uSinComas: ")
+        // console.log(uSinComas)
 
         //setUsername("");
         ocultarInput()
@@ -481,6 +426,26 @@ const Navbar = () => {
                         {user && (
                             <div className="overChats3">
                                 <div className="chats">
+                                    <label>Usuarios agregados:</label>
+                                    {Object.entries(misSeleccionados)?.map((chat) => (
+
+                                        <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1])}>
+                                            {/* <img src={chat[1].photoURL} alt="" /> */}
+                                            <div className="userChatInfo">
+                                                <span>{chat[1].displayName}</span>
+                                                {/* {usuarioActual(chat)} */}
+
+                                            </div>
+                                        </div>
+
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        {user && (
+                            <div className="overChats3">
+                                <div className="chats">
+                                    <label>Usuarios coincidentes:</label>
                                     {Object.entries(myChats)?.map((chat) => (
 
                                         <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1])}>
@@ -496,6 +461,7 @@ const Navbar = () => {
                                 </div>
                             </div>
                         )}
+
                     </div>
                 </label>
 
