@@ -21,11 +21,13 @@ const Navbar = () => {
     const [groupname, setGroupname] = useState("");
     const [user, setUser] = useState(null);
     const [err, setErr] = useState(false);
+    const [prueba, setPrueba] = useState(false);
     const [myChats, setMyChats] = useState([]);
     const rooms = []
 
     const [listaDeInte, setLista] = useState([])
     const [misSeleccionados, setSeleccionados] = useState([])
+    var regresa = true
 
     var grupoId = ""
     // var listaIDS = ""
@@ -87,55 +89,59 @@ const Navbar = () => {
         );
 
         if (username !== null && username != "") {
-            try {
-                let inicio = 0;
-                // let cantidadDeChats = 0;
-                const querySnapshot = await getDocs(q);
+            if (regresa) {
+                try {
+                    let inicio = 0;
+                    // let cantidadDeChats = 0;
+                    const querySnapshot = await getDocs(q);
 
-                // const querySnapshot = await getDocs(q, (doc) => {
-                //     setMyChats(doc.data())
-                // });
+                    // const querySnapshot = await getDocs(q, (doc) => {
+                    //     setMyChats(doc.data())
+                    // });
 
-                querySnapshot.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    setUser(doc.data())
-                    //setMyChats(doc.data())
-                    rooms.push(doc.data())
-                    inicio++;
-                });
-                setMyChats(rooms)
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        setUser(doc.data())
+                        //setMyChats(doc.data())
+                        rooms.push(doc.data())
+                        inicio++;
+                    });
+                    setMyChats(rooms)
 
-                //console.log(user.displayName)
-                console.log(myChats)
-
-
-
-                // console.log("Cantidad de chats: " + cantidadDeChats);
-                console.log("Cantidad de usuarios coincidentes: " + inicio);
+                    //console.log(user.displayName)
+                    console.log(myChats)
 
 
 
+                    // console.log("Cantidad de chats: " + cantidadDeChats);
+                    console.log("Cantidad de usuarios coincidentes: " + inicio);
 
-                if (inicio == 0) {
-                    setErr(true)
-                    setUser(null)
-                } else {
-                    setErr(false)
+
+
+
+                    if (inicio == 0) {
+                        setErr(true)
+                        setUser(null)
+                    } else {
+                        setErr(false)
+                    }
+
+                    let totalDeUsers = 0;
+                    const querySnapshotUsuarios = await getDocs(qVacio);
+                    querySnapshotUsuarios.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        //setUser(doc.data())
+                        totalDeUsers++;
+                    });
+                    console.log("Cantidad total de usuarios: " + totalDeUsers);
+
+
+                } catch (err) {
+                    //setErr(true);
+                    console.log(err)
                 }
-
-                let totalDeUsers = 0;
-                const querySnapshotUsuarios = await getDocs(qVacio);
-                querySnapshotUsuarios.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    //setUser(doc.data())
-                    totalDeUsers++;
-                });
-                console.log("Cantidad total de usuarios: " + totalDeUsers);
-
-
-            } catch (err) {
-                //setErr(true);
-                console.log(err)
+            } else {
+                setPrueba(true)
             }
         } else {
             setErr(true)
@@ -155,6 +161,7 @@ const Navbar = () => {
         //setUser(null)
     }
 
+    console.log(prueba)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -163,17 +170,21 @@ const Navbar = () => {
 
     }
 
+
     const handleSelect = async (u) => {
 
-        const inputBuscador = document.getElementById('inputBuscador');
+        // const inputBuscador = document.getElementById('inputBuscador');
 
         //inputBuscador.value = "";
+        if (regresa) {
+            handleSearch()
+        } else {
+            regresa = true
+        }
 
-        handleSearch();
-
+        setPrueba(false)
 
         if (listaDeInte.length > 0) {
-
 
 
             if (currentUser.uid == u.uid) {
@@ -203,9 +214,19 @@ const Navbar = () => {
                             /* Read more about isConfirmed, isDenied below */
                             if (result.isConfirmed) {
 
+                                // console.log(listaDeInte)
+                                // console.log(misSeleccionados)
                                 listaDeInte.splice(i, 1)
-                                misSeleccionados.splice(i, 1)
+                                // for (let k = 0; k < misSeleccionados.length; k++) {
 
+                                //     if (listaDeInte[i] == misSeleccionados[k]) {
+                                misSeleccionados.splice(i, 1)
+                                // listaDeInte.length -= listaDeInte.length
+                                regresa = false
+                                handleSearch()
+                                //     }
+                                // }
+                                // console.log(listaDeInte)
                             }
                         })
                         siExisteYa = true
@@ -269,76 +290,87 @@ const Navbar = () => {
 
         try {
 
-            console.log("MI sep:")
-            console.log(sep)
-            console.log("Mi lista de inte:")
-            console.log(listaDeInte)
-            const res = await getDoc(doc(db, "chats", combineId));
+            if (listaDeInte.length > 2) {
+                console.log("MI sep:")
+                console.log(sep)
+                console.log("Mi lista de inte:")
+                console.log(listaDeInte)
+                const res = await getDoc(doc(db, "chats", combineId));
 
-            if (!res.exists()) {
-                //crear un chat en la coleccion de grupos
-                await setDoc(doc(db, "chats", combineId), { messages: [] });
+                if (!res.exists()) {
+                    //crear un chat en la coleccion de grupos
+                    await setDoc(doc(db, "chats", combineId), { messages: [] });
 
-                // for (let i = 0; i < sep.length-1; i++) {
-                await updateDoc(doc(db, "userChats", currentUser.uid), {
-                    [combineId + ".userInfo"]: {
-                        uid: uSinComas,
-                        displayName: groupname,
-                        photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
-                    },
-                    [combineId + ".date"]: serverTimestamp(),
-                    [combineId + ".tipoDeChat"]: "Grupo",
-                    [combineId + ".encriptado"]: "Descrifrado",
-                });
-                // }
+                    // for (let i = 0; i < sep.length-1; i++) {
+                    await updateDoc(doc(db, "userChats", currentUser.uid), {
+                        [combineId + ".userInfo"]: {
+                            uid: uSinComas,
+                            displayName: groupname,
+                            photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                        },
+                        [combineId + ".date"]: serverTimestamp(),
+                        [combineId + ".tipoDeChat"]: "Grupo",
+                        [combineId + ".encriptado"]: "Descrifrado",
+                    });
+                    // }
 
-                //cada usuario
+                    //cada usuario
 
-                // for(let i = 0; i<sep.length; i++){
-                if (sep.length <= 1) {
-                    for (let i = 0; i < sep.length; i++) {
-                        await updateDoc(doc(db, "userChats", sep[i]), {
-                            [combineId + ".userInfo"]: {
-                                uid: currentUser.uid,
-                                displayName: groupname,
-                                photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
-                            },
-                            [combineId + ".date"]: serverTimestamp(),
-                            [combineId + ".tipoDeChat"]: "Grupo",
-                            [combineId + ".encriptado"]: "Descrifrado",
-                        });
+                    // for(let i = 0; i<sep.length; i++){
+                    if (sep.length <= 1) {
+                        for (let i = 0; i < sep.length; i++) {
+                            await updateDoc(doc(db, "userChats", sep[i]), {
+                                [combineId + ".userInfo"]: {
+                                    uid: currentUser.uid,
+                                    displayName: groupname,
+                                    photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                                },
+                                [combineId + ".date"]: serverTimestamp(),
+                                [combineId + ".tipoDeChat"]: "Grupo",
+                                [combineId + ".encriptado"]: "Descrifrado",
+                            });
+                        }
+                    } else {
+                        for (let i = 0; i < sep.length; i++) {
+
+                            var nuevoId = ""
+                            for (let k = 0; k < sep.length; k++) {
+                                if (sep[k] != sep[i]) {
+                                    nuevoId = nuevoId + sep[k]
+                                }
+                            }
+
+
+                            await updateDoc(doc(db, "userChats", sep[i]), {
+                                [combineId + ".userInfo"]: {
+                                    uid: nuevoId + currentUser.uid,
+                                    displayName: groupname,
+                                    photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                                },
+                                [combineId + ".date"]: serverTimestamp(),
+                                [combineId + ".tipoDeChat"]: "Grupo",
+                                [combineId + ".encriptado"]: "Descrifrado",
+                            });
+                        }
                     }
                 } else {
-                    for (let i = 0; i < sep.length; i++) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Ya existe un grupo tuyo con esos usuarios!',
+                        text: 'Revise sus chats para conversar con esos usuarios.',
+                        confirmButtonText: 'Aceptar',
+                    })
 
-                        var nuevoId = ""
-                        for (let k = 0; k < sep.length; k++) {
-                            if (sep[k] != sep[i]) {
-                                nuevoId = nuevoId + sep[k]
-                            }
-                        }
-
-
-                        await updateDoc(doc(db, "userChats", sep[i]), {
-                            [combineId + ".userInfo"]: {
-                                uid: nuevoId + currentUser.uid,
-                                displayName: groupname,
-                                photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
-                            },
-                            [combineId + ".date"]: serverTimestamp(),
-                            [combineId + ".tipoDeChat"]: "Grupo",
-                            [combineId + ".encriptado"]: "Descrifrado",
-                        });
-                    }
                 }
 
 
             } else {
 
+
                 Swal.fire({
                     icon: 'error',
-                    title: '¡Ya existe un grupo tuyo con esos usuarios!',
-                    text: 'Revise sus chats para conversar con ese/esos usuario/s.',
+                    title: '¡Selecciona al menos 2 usuarios!',
+                    text: 'Selecciona al menos 2 usuarios para crear el grupo.',
                     confirmButtonText: 'Aceptar',
                 })
 
