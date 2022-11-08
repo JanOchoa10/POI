@@ -143,7 +143,7 @@ const Search = () => {
                     },
                     [combineId + ".date"]: serverTimestamp(),
                     [combineId + ".tipoDeChat"]: "Chat",
-                    [combineId + ".encriptado"]: "Descrifrado",
+                    [combineId + ".encriptado"]: "Encriptado",
                 });
 
                 await updateDoc(doc(db, "userChats", u.uid), {
@@ -154,7 +154,7 @@ const Search = () => {
                     },
                     [combineId + ".date"]: serverTimestamp(),
                     [combineId + ".tipoDeChat"]: "Chat",
-                    [combineId + ".encriptado"]: "Descrifrado",
+                    [combineId + ".encriptado"]: "Encriptado",
                 });
 
             } else {
