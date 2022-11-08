@@ -161,7 +161,7 @@ const Navbar = () => {
         //setUser(null)
     }
 
-    console.log(prueba)
+    //console.log(prueba)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -260,6 +260,10 @@ const Navbar = () => {
 
     }
 
+    function random(min, max) {
+        return Math.floor((Math.random() * (max - min + 1)) + min);
+    }
+
     const crearGrupo = async (u) => {
 
         u = ""
@@ -297,6 +301,27 @@ const Navbar = () => {
                 console.log(listaDeInte)
                 const res = await getDoc(doc(db, "chats", combineId));
 
+                var misImagenes = [
+                    'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                    'https://i.ibb.co/jDdQZp7/Bird1.png',
+                    'https://i.ibb.co/NKW9r6Y/Bird2.png',
+                    'https://i.ibb.co/74cJVKX/Bird2-1.png',
+                    'https://i.ibb.co/NCTZ3t3/Bird3.png',
+                    'https://i.ibb.co/WF5yxGJ/Bird4.png',
+                    'https://i.ibb.co/02CW30w/Bird5.png',
+                    'https://i.ibb.co/k0J2p4w/Bird5-1.png',
+                    'https://i.ibb.co/CmQDThj/bluebird-45.png',
+                    'https://i.ibb.co/PQDtwzB/bluebird-46.png',
+                    'https://i.ibb.co/TqJnvYy/Nutria2.png',
+                    'https://i.ibb.co/kSjt4BS/Nutria-Low.png',
+                    'https://i.ibb.co/RzTkgF3/bluebird.png',
+                    'https://i.ibb.co/cF5T25k/bluebird-56.png',
+                    'https://i.ibb.co/z6YjVg3/Robbin-Profile-Unknown.png',
+                ]
+                var miImagenSelec = random(0, misImagenes.length - 1)
+                var miImagen = misImagenes[miImagenSelec].toString()
+
+
                 if (!res.exists()) {
                     //crear un chat en la coleccion de grupos
                     await setDoc(doc(db, "chats", combineId), { messages: [] });
@@ -306,11 +331,11 @@ const Navbar = () => {
                         [combineId + ".userInfo"]: {
                             uid: uSinComas,
                             displayName: groupname,
-                            photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                            photoURL: miImagen,
                         },
                         [combineId + ".date"]: serverTimestamp(),
                         [combineId + ".tipoDeChat"]: "Grupo",
-                        [combineId + ".encriptado"]: "Descrifrado",
+                        [combineId + ".encriptado"]: "Encriptado",
                     });
                     // }
 
@@ -323,11 +348,11 @@ const Navbar = () => {
                                 [combineId + ".userInfo"]: {
                                     uid: currentUser.uid,
                                     displayName: groupname,
-                                    photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                                    photoURL: miImagen,
                                 },
                                 [combineId + ".date"]: serverTimestamp(),
                                 [combineId + ".tipoDeChat"]: "Grupo",
-                                [combineId + ".encriptado"]: "Descrifrado",
+                                [combineId + ".encriptado"]: "Encriptado",
                             });
                         }
                     } else {
@@ -345,11 +370,11 @@ const Navbar = () => {
                                 [combineId + ".userInfo"]: {
                                     uid: nuevoId + currentUser.uid,
                                     displayName: groupname,
-                                    photoURL: 'https://i.ibb.co/jTBT7yC/Robbin-Profile.png',
+                                    photoURL: miImagen,
                                 },
                                 [combineId + ".date"]: serverTimestamp(),
                                 [combineId + ".tipoDeChat"]: "Grupo",
-                                [combineId + ".encriptado"]: "Descrifrado",
+                                [combineId + ".encriptado"]: "Encriptado",
                             });
                         }
                     }
