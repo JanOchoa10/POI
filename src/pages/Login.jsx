@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import add from "../img/a4.png";
 import add3 from "../img/logo_robbin.png";
@@ -134,6 +134,23 @@ const Login = () => {
         }
     }
 
+    const ref = useRef(null);
+    useEffect(() => {
+        const handleClick = event => {
+          console.log('Vamos a el registro.');
+          navigate("/register");
+        };
+    
+        const element = ref.current;
+    
+        element.addEventListener('click', handleClick);
+    
+        return () => {
+          element.removeEventListener('click', handleClick);          
+        };
+      }, []);
+    
+
     return (
         <div className="formContainer">
             <div className="formWrapper">
@@ -150,7 +167,8 @@ const Login = () => {
                     <button type="submit" className="tam100P">Entrar</button>
                     {err && <span>Paso algo malo...</span>}
                 </form>
-                <p>¿No tienes cuenta? <a href="/register">Registrate</a></p>
+                <p>¿No tienes cuenta? <a className="enlacePrincipal" ref={ref}>Registrate</a></p>
+                {/* <p>¿No tienes cuenta? <label onClick={navigate("/")}>Registrate</label></p> */}
                 <div id="nombres">
                     <input type="file" name="File" id="File" style={{ display: "none" }} />
                 </div>
