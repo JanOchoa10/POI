@@ -292,14 +292,14 @@ const Register = () => {
 
     }
 
-    const ref = useRef(null);
+    const pRef = useRef(null);
     useEffect(() => {
         const handleClick = event => {
           console.log('Vamos a el inicio de sesión.');
           navigate("/login");
         };
     
-        const element = ref.current;
+        const element = pRef.current;
     
         element.addEventListener('click', handleClick);
     
@@ -343,7 +343,7 @@ const Register = () => {
                     <button className="tam100P">Registrarse</button>
                     {err && <span>Paso algo malo...</span>}
                 </form>
-                <p>¿Ya tienes cuenta? <a className="enlacePrincipal" ref={ref}>Inicia sesión</a></p>
+                <p>¿Ya tienes cuenta? <a className="enlacePrincipal" ref={pRef}>Inicia sesión</a></p>
                 {/* <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p> */}
                 <div></div>
             </div>

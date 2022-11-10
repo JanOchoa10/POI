@@ -134,14 +134,14 @@ const Login = () => {
         }
     }
 
-    const ref = useRef(null);
+    const pRef = useRef(null);
     useEffect(() => {
         const handleClick = event => {
           console.log('Vamos a el registro.');
           navigate("/register");
         };
     
-        const element = ref.current;
+        const element = pRef.current;
     
         element.addEventListener('click', handleClick);
     
@@ -167,7 +167,7 @@ const Login = () => {
                     <button type="submit" className="tam100P">Entrar</button>
                     {err && <span>Paso algo malo...</span>}
                 </form>
-                <p>¿No tienes cuenta? <a className="enlacePrincipal" ref={ref}>Registrate</a></p>
+                <p>¿No tienes cuenta? <a className="enlacePrincipal" ref={pRef}>Registrate</a></p>
                 {/* <p>¿No tienes cuenta? <label onClick={navigate("/")}>Registrate</label></p> */}
                 <div id="nombres">
                     <input type="file" name="File" id="File" style={{ display: "none" }} />
