@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import add from "../img/bluebird_56.png";
 import add3 from "../img/logo_robbin.png";
@@ -292,6 +292,22 @@ const Register = () => {
 
     }
 
+    const ref = useRef(null);
+    useEffect(() => {
+        const handleClick = event => {
+          console.log('Vamos a el inicio de sesión.');
+          navigate("/login");
+        };
+    
+        const element = ref.current;
+    
+        element.addEventListener('click', handleClick);
+    
+        return () => {
+          element.removeEventListener('click', handleClick);          
+        };
+      }, []);
+
     return (
         <div className="formContainer">
             <div className="formWrapper">
@@ -327,7 +343,8 @@ const Register = () => {
                     <button className="tam100P">Registrarse</button>
                     {err && <span>Paso algo malo...</span>}
                 </form>
-                <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+                <p>¿Ya tienes cuenta? <a className="enlacePrincipal" ref={ref}>Inicia sesión</a></p>
+                {/* <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p> */}
                 <div></div>
             </div>
         </div>

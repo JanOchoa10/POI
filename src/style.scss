@@ -1042,3 +1042,9 @@ input:checked+.slider:before {
 .escondido {
     display: none;
 }
+
+.enlacePrincipal {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #640164;
+}
