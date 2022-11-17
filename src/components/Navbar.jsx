@@ -13,6 +13,7 @@ import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs,
 import { db } from "../firebase";
 import { ChatContext } from "../context/ChatContext";
 import { list } from "firebase/storage";
+import { getDatabase, ref, set, get, child, onValue, onDisconnect, push } from "firebase/database";
 
 const Navbar = () => {
     const { dispatch } = useContext(ChatContext);
@@ -31,6 +32,78 @@ const Navbar = () => {
 
     var grupoId = ""
     // var listaIDS = ""
+
+    // const { currentUser } = useContext(AuthContext);
+    // Fetch the current user's ID from Firebase Authentication.
+    var uid = currentUser.uid;
+
+    // Create a reference to this user's specific status node.
+    // This is where we will store data about being online/offline.
+    //var userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
+    // const [myDB, setMyDB] = useState(null);
+
+    const db2 = getDatabase();
+
+    const lastOnlineRef = ref(db2, '/users/' + uid + '/lastOnline');
+
+    const myConnectionsRef = ref(db2, '/users/' + uid + '/estado');
+
+    const connectedRef = ref(db2, ".info/connected");
+
+    var miData = null
+
+    if (uid != undefined) {
+
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                //onDisconnect(presenceRef).set(isOnlineForDatabase);
+                // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+                //const con = push(myConnectionsRef);
+                // const miData = push(presenceRef);
+                // When I disconnect, remove this device
+
+                // onDisconnect(myConnectionsRef).set('Desconectado');
+                //onDisconnect(con).update(set(false));
+                //onDisconnect(con).update(false);
+                // onDisconnect(miData).set(isOnlineForDatabase);
+
+                // Add this device to my connections list
+                // this value could contain info about the device or a timestamp too
+                // set(myConnectionsRef, 'Conectado');
+                miData = snap.val()
+                //console.log("Mi dadadad:" + miData)
+                //console.log(con);
+                // set(miData, isOnlineForDatabase);
+
+                // When I disconnect, update the last time I was seen online
+                // onDisconnect(lastOnlineRef).set(serverTimestamp());
+            }
+            if (snap.val() === true) {
+                console.log("Estoy conectado");
+                // onDisconnect(presenceRef).set(isOnlineForDatabase);
+            } else {
+                console.log("Estoy desconectado");
+                // onDisconnect(presenceRef).set(isOfflineForDatabase);
+            }
+
+            // const usuarioConectado = async () => {
+            //     await updateDoc(doc(db, "users", currentUser.uid), {
+            //         ["estado"]: (miData ? "Conectado" : "Desconectado"),
+            //     });
+            // }
+            // usuarioConectado();
+        });
+
+    }
+
+
+    console.log("Mi dadadad 2:" + miData)
+
+
+
+
+
+
 
     // handleSelect("")
     const myConstante = () => {
@@ -424,6 +497,14 @@ const Navbar = () => {
             {/* <img className="img3" src={add3} alt="Logo de Robbin" /> */}
             <div className="user">
                 <img src={currentUser.photoURL} alt="" onClick={myConstante} />
+
+                {miData &&
+                    <div>
+                        <div className="online"></div>
+                    </div>
+                }
+
+
                 <span onClick={myConstante}>{currentUser.displayName}</span>
                 {/* <span onClick={myConstante}>{"¡Hola, "+currentUser.displayName+ "!"}</span> */}
             </div>

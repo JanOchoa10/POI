@@ -9,6 +9,8 @@ import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import { db } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { getDatabase, ref, set, get, child, onValue, onDisconnect, push, query } from "firebase/database";
+import { scryRenderedDOMComponentsWithClass } from "react-dom/test-utils";
 
 
 const Chats = () => {
@@ -87,8 +89,8 @@ const Chats = () => {
 
             var estaEncriptado = chat[1].lastMessage?.encriptado
 
-            console.log(estaEncriptado)
-        
+            //console.log(estaEncriptado)
+
             var miTexto = chat[1].lastMessage?.miTextoEncriptado + ""
             var textoDelMensaje = ""
             if (estaEncriptado == "Encriptado") {
@@ -96,9 +98,9 @@ const Chats = () => {
                     let asciiDelCaracter = 0
                     asciiDelCaracter = miTexto[i].charCodeAt(0);
                     asciiDelCaracter--
-        
+
                     let miLetraSiguiente = String.fromCharCode(asciiDelCaracter);
-        
+
                     textoDelMensaje += miLetraSiguiente
                 }
             } else {
@@ -121,7 +123,78 @@ const Chats = () => {
 
     }
 
+
+    var uid = currentUser.uid;
+
+    // Create a reference to this user's specific status node.
+    // This is where we will store data about being online/offline.
+    //var userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
+    // const [myDB, setMyDB] = useState(null);
+
+    const db2 = getDatabase();
+
+    const lastOnlineRef = ref(db2, '/users/' + uid + '/lastOnline');
+
+    const myConnectionsRef = ref(db2, '/users/' + uid + '/estado');
+
+    const connectedRef = ref(db2, ".info/connected");
+
+    var miData = null
+
+    const rooms = []
+    const [misUsuariosRealTime, setMisURT] = useState(null);
+
+    if (misUsuariosRealTime == null) {
+        get(child(ref(getDatabase()), `users/`)).then((snapshot) => {
+            snapshot.forEach((child) => {
+                // console.log(child.val());
+                rooms.push(child.val());
+            })
+            setMisURT(rooms)
+        });
+    }
+
+    console.log(misUsuariosRealTime)
+
+
+    // console.log(postListRef)
+
+    if (uid != undefined) {
+
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                miData = snap.val()
+            }
+            if (snap.val() === true) {
+                console.log("Estoy conectado");
+            } else {
+                console.log("Estoy desconectado");
+            }
+        });
+
+    }
+
+
+    console.log("Mi dadadad 2:" + miData)
+
+
+
+    function misDatos(userMandado) {
+
+
+        for (let i = 0; i < misUsuariosRealTime.length; i++) {
+            if (userMandado == misUsuariosRealTime[i].uid && misUsuariosRealTime[i].estado == "Conectado") {
+                return (<div>
+                    <div className="online"></div>
+                </div>)
+            }
+        }
+
+    }
+
     return (
+
+
 
         <div className="overChats">
 
@@ -141,6 +214,9 @@ const Chats = () => {
                         {Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).filter(chat => chat[1].tipoDeChat == "Chat").map((chat) => (
                             <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1].userInfo)}>
                                 <img src={chat[1].userInfo.photoURL} alt="" />
+
+                                {misDatos(chat[1].userInfo.uid)}
+
                                 <div className="userChatInfo">
                                     <span>{chat[1].userInfo.displayName}</span>
                                     {usuarioActual(chat)}
@@ -151,6 +227,7 @@ const Chats = () => {
 
                     </div>
                 </div>
+
 
                 <div id="content2" className="content">
                     <div><span className="myTextoChats">Grupos</span></div>
