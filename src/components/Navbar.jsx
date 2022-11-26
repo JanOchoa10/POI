@@ -79,10 +79,10 @@ const Navbar = () => {
                 // onDisconnect(lastOnlineRef).set(serverTimestamp());
             }
             if (snap.val() === true) {
-                console.log("Estoy conectado");
+                console.log("Estoy conectado 3");
                 // onDisconnect(presenceRef).set(isOnlineForDatabase);
             } else {
-                console.log("Estoy desconectado");
+                console.log("Estoy desconectado 3");
                 // onDisconnect(presenceRef).set(isOfflineForDatabase);
             }
 

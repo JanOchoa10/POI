@@ -11,9 +11,10 @@ import { db } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getDatabase, ref, set, get, child, onValue, onDisconnect, push, query } from "firebase/database";
 import { scryRenderedDOMComponentsWithClass } from "react-dom/test-utils";
+import { connectStorageEmulator } from "firebase/storage";
 
 
-const Chats = () => {
+const Chats = (myProp) => {
     const option1 = document.getElementById('option1');
     const option2 = document.getElementById('option2');
     const content1 = document.getElementById('content1');
@@ -145,7 +146,7 @@ const Chats = () => {
     const [misUsuariosRealTime, setMisURT] = useState(null);
 
     if (misUsuariosRealTime == null) {
-        get(child(ref(getDatabase()), `users/`)).then((snapshot) => {
+        get(child(ref(getDatabase()), 'users/')).then((snapshot) => {
             snapshot.forEach((child) => {
                 // console.log(child.val());
                 rooms.push(child.val());
@@ -154,43 +155,114 @@ const Chats = () => {
         });
     }
 
-    console.log(misUsuariosRealTime)
+    // console.error("aqui hijo")
+    //console.log(misUsuariosRealTime)
 
 
     // console.log(postListRef)
 
-    if (uid != undefined) {
+    // if (uid != undefined) {
 
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                miData = snap.val()
-            }
-            if (snap.val() === true) {
-                console.log("Estoy conectado");
-            } else {
-                console.log("Estoy desconectado");
-            }
-        });
+    //     onValue(connectedRef, (snap) => {
+    //         if (snap.val() === true) {
+    //             miData = snap.val()
+    //         }
+    //         if (snap.val() === true) {
+    //             console.log("Estoy conectado");
+    //         } else {
+    //             console.log("Estoy desconectado");
+    //         }
+    //     });
 
-    }
-
-
-    console.log("Mi dadadad 2:" + miData)
+    // }
 
 
+    //console.log("Mi dadadad 2:" + miData)
+
+    // const rooms2 = []
+    // const [misUsuariosRealTime2, setMisURT2] = useState(null);
+    // if (misUsuariosRealTime2 == null) {
+    //     const db = getDatabase();
+    //     const myUsers = ref(db, 'users/');
+    //     onValue(myUsers, (snapshot) => {
+    //         const data = snapshot.val();
+    //         setMisURT2(data);
+
+
+    //     });
+    // }
+
+    // console.error("Mi info")
+    // console.log(misUsuariosRealTime2)
+    // console.log("hubo un cambio")
 
     function misDatos(userMandado) {
 
-
-        for (let i = 0; i < misUsuariosRealTime.length; i++) {
-            if (userMandado == misUsuariosRealTime[i].uid && misUsuariosRealTime[i].estado == "Conectado") {
-                return (<div>
-                    <div className="online"></div>
-                </div>)
+        if (misUsuariosRealTime != null) {
+            for (let i = 0; i < misUsuariosRealTime.length; i++) {
+                if (userMandado == misUsuariosRealTime[i].uid && misUsuariosRealTime[i].estado == "Conectado") {
+                    return (<div>
+                        <div className="online"></div>
+                    </div>)
+                }
             }
         }
 
+        // if (misUsuariosRealTime != null) {
+        //     for (let i = 0; i < misUsuariosRealTime2.length; i++) {
+        //         if (userMandado == misUsuariosRealTime2[i].uid && misUsuariosRealTime2[i].estado == "Conectado") {
+        //             return (<div>
+        //                 <div className="online"></div>
+        //             </div>)
+        //         }
+        //     }
+        // }       
+
+
+        // if (myProp.conexiones != null) {
+        //     for (let i = 0; i < myProp.conexiones.length; i++) {
+        //         if (userMandado == myProp.conexiones[i].uid && myProp.conexiones[i].estado == "Conectado") {
+        //             return (<div>
+        //                 <div className="online"></div>
+        //             </div>)
+        //         }
+        //     }
+        // }      
+
     }
+
+    // console.warn("Mi arreglo:")
+    //console.log(myProp.conexiones["ub5JpOnGyNhhLUXSDZKXAkTK3q63"])
+
+    // if (myProp.conexiones != undefined) {
+    //     const misUA = myProp.conexiones["oZN84fQJr1WWWm03aQyvlxjfpIv1"]
+    //     console.log(misUA)
+    // }
+
+    // console.log(misUA["4LoPn7XUwuSsA7EUqXqVpMtGqfO2"])
+
+    function myUser(miUser) {
+
+        console.log(miUser)
+
+        if (myProp.conexiones != undefined) {
+
+            if (myProp.conexiones[miUser]) {
+                if (myProp.conexiones[miUser]["estado"] == "Conectado") {
+                    return (
+                        <div>
+                            <div className="online"></div>
+                        </div>
+                    )
+                }
+            }
+
+
+        }
+
+    }
+
+
 
     return (
 
@@ -215,7 +287,15 @@ const Chats = () => {
                             <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1].userInfo)}>
                                 <img src={chat[1].userInfo.photoURL} alt="" />
 
-                                {misDatos(chat[1].userInfo.uid)}
+                                {/* {misDatos(chat[1].userInfo.uid)} */}
+
+                                {myUser(chat[1].userInfo.uid)}
+
+                                {/* {myProp.conexiones[chat[1].userInfo.uid] == myProp.conexiones["ub5JpOnGyNhhLUXSDZKXAkTK3q63"] &&
+                                    <div>
+                                        <div className="online"></div>
+                                    </div>
+                                } */}
 
                                 <div className="userChatInfo">
                                     <span>{chat[1].userInfo.displayName}</span>
