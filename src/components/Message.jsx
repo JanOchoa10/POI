@@ -8,16 +8,18 @@ import add3 from "../img/robbin3.jpg";
 import add4 from "../img/bluebird.png";
 import { doc, onSnapshot, query, collection, orderBy, startAt, endAt, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import { getDatabase, onValue, ref } from "firebase/database";
+
 
 const Message = ({ message }) => {
 
     const { currentUser } = useContext(AuthContext)
     const { data } = useContext(ChatContext)
 
-    const ref = useRef();
+    const ref2 = useRef();
 
     useEffect(() => {
-        ref.current?.scrollIntoView({ behavior: "smooth" });
+        ref2.current?.scrollIntoView({ behavior: "smooth" });
     }, [message]);
 
     var idSeparadas = []
@@ -206,16 +208,49 @@ const Message = ({ message }) => {
         textoDelMensaje = miTexto
     }
 
+    const [misUsuariosRealTime2, setMisURT2] = useState(null);
+    if (misUsuariosRealTime2 == null) {
+        const db = getDatabase();
+        const myUsers = ref(db, 'users/');
+        onValue(myUsers, (snapshot) => {
+            const data = snapshot.val();
+            setMisURT2(data);
+        });
+    }
+    console.log(misUsuariosRealTime2)
+
+
+    function myUser(miUser) {
+
+        console.log(miUser)
+
+        if (misUsuariosRealTime2 != undefined) {
+
+            if (misUsuariosRealTime2[miUser]) {
+                if (misUsuariosRealTime2[miUser]["estado"] == "Conectado") {
+                    return (
+                        <div>
+                            <div className="online2"></div>
+                        </div>
+                    )
+                }
+            }
+
+
+        }
+
+    }
 
     return (
         <div
-            ref={ref}
+            ref2={ref2}
             className={`message ${message.senderId === currentUser.uid && "owner"}`}>
             <div className="messageInfo">
                 <img src={
                     imagenURL
-                }
-                    alt="" />
+                } />
+                {myUser(message.senderId)}
+
                 <p>{date}</p>
                 <p>{date1}</p>
             </div>
