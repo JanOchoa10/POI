@@ -11,7 +11,7 @@ import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { connectStorageEmulator } from "firebase/storage";
-
+import { getDatabase, onValue, ref } from "firebase/database";
 
 const Chat = () => {
 
@@ -358,13 +358,50 @@ const Chat = () => {
 
     }
 
+    const [misUsuariosRealTime2, setMisURT2] = useState(null);
+    if (misUsuariosRealTime2 == null) {
+        const db = getDatabase();
+        const myUsers = ref(db, 'users/');
+        onValue(myUsers, (snapshot) => {
+            const data = snapshot.val();
+            setMisURT2(data);
+        });
+    }
+    // console.log(misUsuariosRealTime2)
+
+    function myUser(miUser) {
+
+        //     console.log(miUser)
+
+        if (misUsuariosRealTime2 != undefined) {
+
+            if (misUsuariosRealTime2[miUser]) {
+                if (misUsuariosRealTime2[miUser]["estado"] == "Conectado") {
+                    return (
+                        <div>
+                            <div className="online3"></div>
+                        </div>
+                    )
+                }
+            }
+
+
+        }
+
+    }
 
     function InsertarIconos(data) {
 
         if (data.user?.displayName !== undefined) {
             return (
                 <div className="chatInfo">
-                    <img className="img2" src={data.user?.photoURL} alt=""/>
+                    <div>
+                        <img className="img2" src={data.user?.photoURL} alt="" />
+                        {myUser(data.user?.uid)}
+                    </div>
+
+
+
                     <span>{data.user?.displayName}</span>
 
                     <div className="chatIcons">
