@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import add from "../img/a4.png";
 import add3 from "../img/logo_robbin.png";
@@ -22,6 +22,8 @@ const Login = () => {
     }
     //Asignamos el icono de nuestro sitio web
     setFavicons('https://i.ibb.co/rkKS779/logo-Robbin128.jpg');
+
+    //navigate("/");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -149,7 +151,7 @@ const Login = () => {
           element.removeEventListener('click', handleClick);          
         };
       }, []);
-    
+
 
     return (
         <div className="formContainer">

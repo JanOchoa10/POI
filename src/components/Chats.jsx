@@ -9,9 +9,12 @@ import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import { db } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { getDatabase, ref, set, get, child, onValue, onDisconnect, push, query } from "firebase/database";
+import { scryRenderedDOMComponentsWithClass } from "react-dom/test-utils";
+import { connectStorageEmulator } from "firebase/storage";
 
 
-const Chats = () => {
+const Chats = (myProp) => {
     const option1 = document.getElementById('option1');
     const option2 = document.getElementById('option2');
     const content1 = document.getElementById('content1');
@@ -87,8 +90,8 @@ const Chats = () => {
 
             var estaEncriptado = chat[1].lastMessage?.encriptado
 
-            console.log(estaEncriptado)
-        
+            //console.log(estaEncriptado)
+
             var miTexto = chat[1].lastMessage?.miTextoEncriptado + ""
             var textoDelMensaje = ""
             if (estaEncriptado == "Encriptado") {
@@ -96,9 +99,9 @@ const Chats = () => {
                     let asciiDelCaracter = 0
                     asciiDelCaracter = miTexto[i].charCodeAt(0);
                     asciiDelCaracter--
-        
+
                     let miLetraSiguiente = String.fromCharCode(asciiDelCaracter);
-        
+
                     textoDelMensaje += miLetraSiguiente
                 }
             } else {
@@ -121,7 +124,149 @@ const Chats = () => {
 
     }
 
+
+    var uid = currentUser.uid;
+
+    // Create a reference to this user's specific status node.
+    // This is where we will store data about being online/offline.
+    //var userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
+    // const [myDB, setMyDB] = useState(null);
+
+    const db2 = getDatabase();
+
+    const lastOnlineRef = ref(db2, '/users/' + uid + '/lastOnline');
+
+    const myConnectionsRef = ref(db2, '/users/' + uid + '/estado');
+
+    const connectedRef = ref(db2, ".info/connected");
+
+    var miData = null
+
+    const rooms = []
+    const [misUsuariosRealTime, setMisURT] = useState(null);
+
+    if (misUsuariosRealTime == null) {
+        get(child(ref(getDatabase()), 'users/')).then((snapshot) => {
+            snapshot.forEach((child) => {
+                // console.log(child.val());
+                rooms.push(child.val());
+            })
+            setMisURT(rooms)
+        });
+    }
+
+    // console.error("aqui hijo")
+    //console.log(misUsuariosRealTime)
+
+
+    // console.log(postListRef)
+
+    // if (uid != undefined) {
+
+    //     onValue(connectedRef, (snap) => {
+    //         if (snap.val() === true) {
+    //             miData = snap.val()
+    //         }
+    //         if (snap.val() === true) {
+    //             console.log("Estoy conectado");
+    //         } else {
+    //             console.log("Estoy desconectado");
+    //         }
+    //     });
+
+    // }
+
+
+    //console.log("Mi dadadad 2:" + miData)
+
+    // const rooms2 = []
+    // const [misUsuariosRealTime2, setMisURT2] = useState(null);
+    // if (misUsuariosRealTime2 == null) {
+    //     const db = getDatabase();
+    //     const myUsers = ref(db, 'users/');
+    //     onValue(myUsers, (snapshot) => {
+    //         const data = snapshot.val();
+    //         setMisURT2(data);
+
+
+    //     });
+    // }
+
+    // console.error("Mi info")
+    // console.log(misUsuariosRealTime2)
+    // console.log("hubo un cambio")
+
+    function misDatos(userMandado) {
+
+        if (misUsuariosRealTime != null) {
+            for (let i = 0; i < misUsuariosRealTime.length; i++) {
+                if (userMandado == misUsuariosRealTime[i].uid && misUsuariosRealTime[i].estado == "Conectado") {
+                    return (<div>
+                        <div className="online"></div>
+                    </div>)
+                }
+            }
+        }
+
+        // if (misUsuariosRealTime != null) {
+        //     for (let i = 0; i < misUsuariosRealTime2.length; i++) {
+        //         if (userMandado == misUsuariosRealTime2[i].uid && misUsuariosRealTime2[i].estado == "Conectado") {
+        //             return (<div>
+        //                 <div className="online"></div>
+        //             </div>)
+        //         }
+        //     }
+        // }       
+
+
+        // if (myProp.conexiones != null) {
+        //     for (let i = 0; i < myProp.conexiones.length; i++) {
+        //         if (userMandado == myProp.conexiones[i].uid && myProp.conexiones[i].estado == "Conectado") {
+        //             return (<div>
+        //                 <div className="online"></div>
+        //             </div>)
+        //         }
+        //     }
+        // }      
+
+    }
+
+    // console.warn("Mi arreglo:")
+    //console.log(myProp.conexiones["ub5JpOnGyNhhLUXSDZKXAkTK3q63"])
+
+    // if (myProp.conexiones != undefined) {
+    //     const misUA = myProp.conexiones["oZN84fQJr1WWWm03aQyvlxjfpIv1"]
+    //     console.log(misUA)
+    // }
+
+    // console.log(misUA["4LoPn7XUwuSsA7EUqXqVpMtGqfO2"])
+
+    function myUser(miUser) {
+
+        console.log(miUser)
+
+        if (myProp.conexiones != undefined) {
+
+            if (myProp.conexiones[miUser]) {
+                if (myProp.conexiones[miUser]["estado"] == "Conectado") {
+                    return (
+                        <div>
+                            <div className="online"></div>
+                        </div>
+                    )
+                }
+            }
+
+
+        }
+
+    }
+
+
+
     return (
+
+
 
         <div className="overChats">
 
@@ -141,6 +286,17 @@ const Chats = () => {
                         {Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).filter(chat => chat[1].tipoDeChat == "Chat").map((chat) => (
                             <div className="userChat" key={chat[0]} onClick={() => handleSelect(chat[1].userInfo)}>
                                 <img src={chat[1].userInfo.photoURL} alt="" />
+
+                                {/* {misDatos(chat[1].userInfo.uid)} */}
+
+                                {myUser(chat[1].userInfo.uid)}
+
+                                {/* {myProp.conexiones[chat[1].userInfo.uid] == myProp.conexiones["ub5JpOnGyNhhLUXSDZKXAkTK3q63"] &&
+                                    <div>
+                                        <div className="online"></div>
+                                    </div>
+                                } */}
+
                                 <div className="userChatInfo">
                                     <span>{chat[1].userInfo.displayName}</span>
                                     {usuarioActual(chat)}
@@ -151,6 +307,7 @@ const Chats = () => {
 
                     </div>
                 </div>
+
 
                 <div id="content2" className="content">
                     <div><span className="myTextoChats">Grupos</span></div>
