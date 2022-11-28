@@ -26,6 +26,7 @@ const Input = () => {
     const [text, setText] = useState("");
     const [senderId, setSender] = useState("");
     const [img, setImg] = useState(null);
+    const [fileI, setFileI] = useState(null);
 
     const { currentUser } = useContext(AuthContext)
     const { data } = useContext(ChatContext)
@@ -159,7 +160,7 @@ const Input = () => {
                 // try {
                 uploadTask.on(
                     (error) => {
-                        console.log("Mi error: \n" + error)
+                        console.error("Mi error img: \n" + error)
                     },
                     () => {
 
@@ -187,17 +188,57 @@ const Input = () => {
                 //     console.log("Error aquí: " + error)
                 // }
 
-            } else {
-                await updateDoc(doc(db, "chats", indiceDeBusqueda), {
-                    messages: arrayUnion({
-                        id: uuid(),
-                        miTextoEncriptado,
-                        senderId: currentUser.uid,
-                        date: Timestamp.now(),
-                        encriptado: estaEncriptado,
-                    }),
+            } else if (fileI) {
+                const storageRef = ref(storage, uuid());
+                const uploadTask = uploadBytesResumable(storageRef, fileI);
 
-                });
+                uploadTask.on(
+                    (error) => {
+                        //setErr(true);
+                        console.error("Mi error archivo: \n" + error)
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                            //getDownloadURL(storageRef).then(async (downloadURL) => {
+                            await updateDoc(doc(db, "chats", indiceDeBusqueda), {
+                                messages: arrayUnion({
+                                    id: uuid(),
+                                    miTextoEncriptado,
+                                    senderId: currentUser.uid,
+                                    date: Timestamp.now(),
+                                    file: downloadURL,
+                                    encriptado: estaEncriptado,
+                                }),
+
+                            });
+
+                        });
+                    }
+                );
+
+            } else {
+
+                if (text != "") {
+                    await updateDoc(doc(db, "chats", indiceDeBusqueda), {
+                        messages: arrayUnion({
+                            id: uuid(),
+                            miTextoEncriptado,
+                            senderId: currentUser.uid,
+                            date: Timestamp.now(),
+                            encriptado: estaEncriptado,
+                        }),
+
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No hay texto",
+                        text: "Debes escribir algo para enviar un mensaje",
+                        confirmButtonText: "Aceptar"
+                    }
+                    )
+                }
+
             }
         } catch (err) {
             console.log("Imagen: \n" + err)
@@ -241,6 +282,7 @@ const Input = () => {
 
         setText("");
         setImg(null);
+        setFileI(null);
     };
 
     const handleKey = (e) => {
@@ -284,7 +326,12 @@ const Input = () => {
                                 <ul className="menu-vertical">
 
                                     <li>
-                                        <img src={Attach} alt="" title="Adjuntar archivo" />
+                                        {/* <img src={Attach} alt="" title="Adjuntar archivo" /> */}
+                                        <input type="file" style={{ display: "none" }} id="myfile" accept=".txt" onChange={e => setFileI(e.target.files[0])} />
+                                        <label htmlFor="myfile">
+                                            <img src={Attach} alt="" title="Adjuntar archivo" />
+
+                                        </label>
                                     </li>
                                     <li>
                                         <input type="file" style={{ display: "none" }} id="photo" accept="image/*" onChange={e => setImg(e.target.files[0])} />
@@ -293,7 +340,9 @@ const Input = () => {
 
                                         </label>
                                     </li>
-                                    <li><img src={Loca} alt="" title="Mandar ubicación" /></li>
+                                    <li>
+                                        <img src={Loca} alt="" title="Mandar ubicación" />
+                                    </li>
                                 </ul>
                             </li>
                         </ul>

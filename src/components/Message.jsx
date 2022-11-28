@@ -255,8 +255,24 @@ const Message = ({ message }) => {
                 <p>{date1}</p>
             </div>
             <div className="messageContent">
-                <p>{textoDelMensaje}</p>
-                {message.img && <img src={message.img} alt="" />}
+                <p>{textoDelMensaje}
+                    {
+                        message.img ?
+                            <div>
+                                {textoDelMensaje && <br></br>}
+                                <img src={message.img} alt="" />
+                            </div>
+                            :
+                            message.file ? 
+                            <div>
+                                {textoDelMensaje && <br></br>}
+                                <embed src={message.file} width="100%" />
+                            </div>
+                            :
+                            <div></div>
+
+                    }
+                </p>
             </div>
         </div>
 
