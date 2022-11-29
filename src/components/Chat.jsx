@@ -12,9 +12,11 @@ import { db } from "../firebase";
 import { collection, query, where, onSnapshot, orderBy, startAt, endAt, getDocs, getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { connectStorageEmulator } from "firebase/storage";
 import { getDatabase, onValue, ref } from "firebase/database";
+import { useNavigate, Link } from "react-router-dom";
 
 const Chat = () => {
 
+    const navigate = useNavigate();
     const { data } = useContext(ChatContext);
     const { currentUser } = useContext(AuthContext);
     const { dispatch } = useContext(ChatContext);
@@ -156,9 +158,23 @@ const Chat = () => {
 
     const videollamada = (e) => {
         Swal.fire({
-            icon: 'success',
-            title: '¡Botón de videollamada funcionando!',
-            confirmButtonText: 'Aceptar',
+            icon: 'question',
+            title: '¿Deseas comenzar una videollamada?',
+            confirmButtonText: 'Sí, empecemos',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            // footer: '<a href="http://localhost:3002/myroom">Sí, empezar</a>'
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                // Swal.fire('Saved!', '', 'success')
+                // navigate("myroom");
+                // window.location.href = "http://localhost:3002/myroom";
+                window.open('http://localhost:3002/myroom');
+
+            } else {
+                // Swal.fire('Changes are not saved', '', 'info')
+            }
         })
 
     }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        const ROOM_ID = "<%= roomId %>"
+    </script>
+    <script defer src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <link rel="shortcut icon" href="../src/img/logoRobbin128.jpg">
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="script.js" defer></script>
+
+    <!-- <script src="../src/style.scss"></script> -->
+    <title>Robbin - Videollamada</title>
+    <style>
+        :root {
+            --color_gris: #383838;
+            --color_gris_oscuro: #201e1e;
+            --color_naranja: #B0734F;
+            --color_naranja_claro: #f6d0ba;
+            --color-online: #41db51;
+        }
+
+        * {
+            font-family: "Open Sans", sans-serif;
+            margin: 0;
+        }
+
+        body {
+            background: var(--color_naranja);
+        }
+
+        #video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 300px);
+            grid-auto-rows: 300px;
+            gap: 25px;
+            margin: 0 25px 0 25px;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            /* max-height: 50%; */
+            /* height: 100%; */
+            object-fit: cover;
+        }
+
+        button {
+            margin: 10px;
+        }
+
+        .getlink {
+            width: 120px;
+            margin: 40px auto;
+            display: block;
+            position: relative;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            text-decoration: none;
+            padding: 9px;
+            color: white;
+            background: var(--color_naranja);
+        }
+
+        .getlink:hover {
+            background: var(--color_naranja_claro);
+            color: #383838;
+        }
+
+        .getlink:after {
+            border-color: transparent transparent transparent var(--color_naranja);
+            border-style: solid;
+            border-width: 22px;
+            content: "";
+            float: right;
+            right: -44px;
+            height: 0;
+            position: absolute;
+            top: 0;
+            width: 0;
+        }
+
+        .getlink:hover:after {
+            border-color: transparent transparent transparent var(--color_naranja_claro);
+
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="window.close()">Regresar a Robbin</button>
+
+    <div id="video-grid"></div>
+
+    <a class="getlink" href="javascript:getlink();">Compartir URL</a>
+
+    <script>
+
+        // Asignamos icono en la pestaña
+        //Creamos la función para asignar el icono
+        function setFavicons(favImg) {
+            let headTitle = document.querySelector('head');
+            let setFavicon = document.createElement('link');
+            setFavicon.setAttribute('rel', 'shortcut icon');
+            setFavicon.setAttribute('href', favImg);
+            headTitle.appendChild(setFavicon);
+        }
+        //Asignamos el icono de nuestro sitio web
+        setFavicons('https://i.ibb.co/rkKS779/logo-Robbin128.jpg');
+
+        function getlink() {
+            var aux = document.createElement('input');
+            aux.setAttribute('value', window.location.href.split('?')[0].split('#')[0]);
+            document.body.appendChild(aux);
+            aux.select();
+            document.execCommand('copy');
+            document.body.removeChild(aux);
+            var css = document.createElement('style');
+            var estilo = document.createTextNode('#aviso {position:fixed; z-index: 9999999; top: 50%;left:50%;margin-left: -130px;padding: 20px; background: var(--color_gris_oscuro);border-radius: 8px;font-family: sans-serif; color: white;}');
+            css.appendChild(estilo);
+            document.head.appendChild(css);
+            var aviso = document.createElement('div');
+            aviso.setAttribute('id', 'aviso');
+            var contenido = document.createTextNode('Enlace copiado al portapapeles');
+            aviso.appendChild(contenido);
+            document.body.appendChild(aviso);
+            window.load = setTimeout('document.body.removeChild(aviso)', 2000);
+        }
+    </script>
+
+</body>
+
+</html>
