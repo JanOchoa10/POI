@@ -1,0 +1,8 @@
+------------------------------- iniciar server 3000 para el aplicación de chats
+
+yarn install
+yarn start
+
+------------------------------- iniciar server 5000 para el api del backend (videollamadas)
+
+npm run devStart
