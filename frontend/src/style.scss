@@ -608,6 +608,15 @@
                             padding: 10px 20px;
                             border-radius: 0px 10px 10px 10px;
                             max-width: max-content;
+
+                            a {
+                                color: blue;
+                                text-decoration-color: blue;
+                            }
+                            a:hover {
+                                color: purple;
+                                text-decoration-color: purple;
+                            }
                         }
 
                         img {
@@ -625,6 +634,15 @@
                                 background-color: #383737;
                                 color: white;
                                 border-radius: 10px 0px 10px 10px;
+
+                                a {
+                                    color: aqua;
+                                    text-decoration-color: aqua;
+                                }
+                                a:hover {
+                                    color: greenyellow;
+                                    text-decoration-color: greenyellow;
+                                }
                             }
                         }
                     }
@@ -1164,20 +1182,20 @@ input:checked+.slider:before {
     text-align: center;
     color: var(--color_gris);
     // position: absolute;
-//   top: -60%;
-//   left: 50%;
-//   margin: 100% 0 0 0; /* aplicar a top y al margen izquierdo un valor negativo para completar el centrado del elemento hijo */
+    //   top: -60%;
+    //   left: 50%;
+    //   margin: 100% 0 0 0; /* aplicar a top y al margen izquierdo un valor negativo para completar el centrado del elemento hijo */
 }
 
-.arriba-caller{
+.arriba-caller {
     // width: 25%;
     justify-content: center;
     align-content: center;
     margin-bottom: 50px;
 }
 
-body{
-background: var(--color_naranja);
+body {
+    background: var(--color_naranja);
 }
 
 .myBodyVideoCall {

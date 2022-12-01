@@ -104,8 +104,9 @@ function Videollamada() {
 
     const leaveCall = () => {
         setCallEnded(true)
-        connectionRef.current.destroy()
-        window.close()
+        console.log("Llamada: "+callEnded)
+        // connectionRef.current.destroy()
+        // window.close()
     }
 
     return (

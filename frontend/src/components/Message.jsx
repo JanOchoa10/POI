@@ -255,7 +255,10 @@ const Message = ({ message }) => {
                 <p>{date1}</p>
             </div>
             <div className="messageContent">
-                <p>{textoDelMensaje}
+                <p>{textoDelMensaje.startsWith('http://') || textoDelMensaje.startsWith('https://') ? (
+                    <a href={textoDelMensaje} target="_blank">{textoDelMensaje}</a>
+                ) : (textoDelMensaje)
+                }
                     {
                         message.img ?
                             <div>
@@ -263,13 +266,13 @@ const Message = ({ message }) => {
                                 <img src={message.img} alt="" />
                             </div>
                             :
-                            message.file ? 
-                            <div>
-                                {textoDelMensaje && <br></br>}
-                                <embed src={message.file} width="100%" />
-                            </div>
-                            :
-                            <div></div>
+                            message.file ?
+                                <div>
+                                    {textoDelMensaje && <br></br>}
+                                    <embed src={message.file} width="100%" />
+                                </div>
+                                :
+                                <div></div>
 
                     }
                 </p>

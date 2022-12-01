@@ -297,6 +297,71 @@ const Input = () => {
     //     setShowPicker(false);
     // }
 
+    function mandarUbicacion() {
+        // Swal.fire('Ubicación lista', '', 'success')
+        Swal.fire({
+            title: '¿Deseas escribir tu ubicación?',
+            text: "La ubicación se escribirá en tu mensaje, sustituyendo el mensaje actual",
+            icon: 'question',
+            showCancelButton: true,
+            // confirmButtonColor: '#3085d6',
+            // cancelButtonColor: '#d33',
+            confirmButtonText: '¡Sí, escribir mi ubicación!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                obtenerURL();
+                Swal.fire({
+                    title: '¡Se ha escrito tu ubicación!',
+                    // text: "You won't be able to revert this!",
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    // showCancelButton: true,
+                    // confirmButtonColor: '#3085d6',
+                    // cancelButtonColor: '#d33',
+                    // confirmButtonText: 'Yes, delete it!'
+                })
+            }
+        })
+
+        // handleSend();
+    }
+
+    // $('#location-button').click(function () {
+
+    function obtenerURL() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log(position);
+                // document.getElementById("Localización").href = "https://www.google.com.mx/maps/@" + position.coords.latitude + "," + position.coords.longitude + "";
+                setText("https://www.google.com.mx/maps/@" + position.coords.latitude + "," + position.coords.longitude + "");
+                console.log("Mi ubi: " + text);
+            });
+        }
+    }
+    // });
+
+    // function iniciarMap() {
+
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(function (position) {
+    //             console.log(position);
+    //             // document.getElementById("Localización").href = "https://www.google.com.mx/maps/@" + position.coords.latitude + "," + position.coords.longitude + "";
+
+
+    //             var coord = { lat: position.coords.latitude, lng: position.coords.longitude };
+    //             var map = new google.maps.Map(document.getElementById('map'), {
+    //                 zoom: 16,
+    //                 center: coord
+    //             });
+    //             var marker = new google.maps.Marker({
+    //                 position: coord,
+    //                 map: map
+    //             });
+    //         });
+    //     }
+    // }
+
     function InsertarIconos(data) {
 
         if (data.user?.displayName !== undefined) {
@@ -341,7 +406,7 @@ const Input = () => {
                                         </label>
                                     </li>
                                     <li>
-                                        <img src={Loca} alt="" title="Mandar ubicación" />
+                                        <img src={Loca} alt="" title="Mandar ubicación" onClick={mandarUbicacion} />
                                     </li>
                                 </ul>
                             </li>
