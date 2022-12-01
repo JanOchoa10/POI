@@ -12,7 +12,7 @@ import io from "socket.io-client"
 
 
 const socket = io.connect('http://localhost:5000')
-function Videollamada() {
+function Llamada() {
     const [me, setMe] = useState("")
     const [stream, setStream] = useState()
     const [receivingCall, setReceivingCall] = useState(false)
@@ -104,7 +104,7 @@ function Videollamada() {
 
     const leaveCall = () => {
         setCallEnded(true)
-        // console.log("Videollamada: "+callEnded)
+        // console.log("Llamada: "+callEnded)
         connectionRef.current.destroy()
         window.close()
     }
@@ -116,11 +116,11 @@ function Videollamada() {
             <div className="container">
                 <div className="video-container">
                     <div className="video" >
-                        {stream && <video playsInline muted ref={myVideo} autoPlay style={{ width: "300px" }} />}
+                        {stream && <video playsInline muted ref={myVideo} autoPlay style={{ width: "0px" }} />}
                     </div>
                     <div className="video">
                         {callAccepted && !callEnded ?
-                            <video playsInline ref={userVideo} autoPlay style={{ width: "300px" }} /> :
+                            <video playsInline ref={userVideo} autoPlay style={{ width: "0px" }} /> :
                             null}
                     </div>
                 </div>
@@ -189,4 +189,4 @@ function Videollamada() {
     )
 }
 
-export default Videollamada
+export default Llamada

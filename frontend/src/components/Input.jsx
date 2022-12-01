@@ -339,49 +339,18 @@ const Input = () => {
             });
         }
     }
-    // });
-
-    // function iniciarMap() {
-
-    //     if (navigator.geolocation) {
-    //         navigator.geolocation.getCurrentPosition(function (position) {
-    //             console.log(position);
-    //             // document.getElementById("Localización").href = "https://www.google.com.mx/maps/@" + position.coords.latitude + "," + position.coords.longitude + "";
-
-
-    //             var coord = { lat: position.coords.latitude, lng: position.coords.longitude };
-    //             var map = new google.maps.Map(document.getElementById('map'), {
-    //                 zoom: 16,
-    //                 center: coord
-    //             });
-    //             var marker = new google.maps.Marker({
-    //                 position: coord,
-    //                 map: map
-    //             });
-    //         });
-    //     }
-    // }
 
     function InsertarIconos(data) {
 
         if (data.user?.displayName !== undefined) {
             return (
                 <div className="input">
-                    {/* <img src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg" alt="" />
-                    {showPicker && <emoji pickerStyle={{widht: '100%'}}
-                    onEmojiClick={onEmojiClick}/>} */}
-
-                    {/* <img src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg" alt="" />
-                    {showPicker && <emoji pickerStyle={{ widht: '100%' }}
-                        onEmojiClick={onEmojiClick} />} */}
 
                     <input type="text" placeholder="Mensaje" onKeyDown={handleKey} onChange={e => setText(e.target.value)} value={text} title="Escribe tu mensaje" />
 
 
 
                     <div className="send">
-                        {/* <input type="file" style={{ display: "none" }} id="file" accept=".pdf, .rar, .zip" />
-                        <label htmlFor="file"> */}
                         <ul className="menu-horizontal">
                             <li>
                                 <img className="menu-horizontal" src={Plus} alt=""
@@ -411,17 +380,6 @@ const Input = () => {
                                 </ul>
                             </li>
                         </ul>
-
-
-                        {/* <img src={Attach} alt="" title="Adjuntar archivo" /> */}
-
-                        {/* </label> */}
-
-                        {/* <input type="file" style={{ display: "none" }} id="photo" accept="image/*" onChange={e => setImg(e.target.files[0])} />
-                        <label htmlFor="photo">
-                            <img src={Img} alt="" title="Adjuntar imagen" />
-
-                        </label> */}
                         <button onClick={handleSend} title="Enviar mensaje">Enviar</button>
                     </div>
                 </div>

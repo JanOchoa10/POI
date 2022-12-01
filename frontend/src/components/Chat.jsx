@@ -151,9 +151,17 @@ const Chat = () => {
 
     const llamada = (e) => {
         Swal.fire({
-            icon: 'success',
-            title: '¡Botón de llamada funcionando!',
-            confirmButtonText: 'Aceptar',
+            icon: 'question',
+            title: '¿Deseas comenzar una llamada?',
+            confirmButtonText: 'Sí, empecemos',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.open('llamada');
+                setVideollamada(true)
+            }
         })
 
     }

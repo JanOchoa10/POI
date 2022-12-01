@@ -2,6 +2,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Videollamada from "./pages/Videollamada";
+import Llamada from "./pages/llamada";
 import "./style.scss";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom"
 import { useContext } from "react";
@@ -26,6 +27,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="videollamada" element={<Videollamada />} />
+            <Route path="llamada" element={<Llamada />} />
           </Route>
       </Routes>
     </BrowserRouter>
