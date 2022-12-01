@@ -44,10 +44,10 @@ function Videollamada() {
 
         socket.on("me", (id) => {
             setMe(id)
-            console.log("My id: " + id)
-            console.log("My id me :" + me)
+            // console.log("My id: " + id)
+            // console.log("My id me :" + me)
         })
-        console.log("My id me :" + me)
+        // console.log("My id me :" + me)
 
         socket.on("callUser", (data) => {
             setReceivingCall(true)
